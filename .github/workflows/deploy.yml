@@ -46,6 +46,8 @@ jobs:
 
       - name: Terraform Apply
         env:
+          TF_VAR_project_id: ${{ env.PROJECT_ID }}
+          TF_VAR_cloud_run_service_account_email: ${{ env.CLOUD_RUN_SERVICE_ACCOUNT_EMAIL }}
           TF_VAR_gcp_sa_key_json: ${{ secrets.GCP_SA_KEY }}
         run: |
           cd whatlas-infra
