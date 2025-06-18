@@ -26,6 +26,11 @@ variable "cloud_run_service_account_email" {
   type        = string
 }
 
+variable "gcp_sa_key_json" {
+  description = "Conteúdo do JSON da service account"
+  type        = string
+}
+
 variable "image_tag" {
   description = "Tag da imagem Docker"
   type        = string

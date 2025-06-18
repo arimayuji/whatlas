@@ -13,5 +13,5 @@ resource "google_secret_manager_secret" "google_app_credentials" {
 
 resource "google_secret_manager_secret_version" "google_app_credentials_version" {
   secret      = google_secret_manager_secret.google_app_credentials.id
-  secret_data = file("../service-account-key.json")
+  secret_data = var.gcp_sa_key_json
 }
