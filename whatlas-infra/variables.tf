@@ -25,3 +25,9 @@ variable "cloud_run_service_account_email" {
   description = "Service account usada pelo Cloud Run para acessar o Secret Manager"
   type        = string
 }
+
+variable "image_tag" {
+  description = "Tag da imagem Docker"
+  type        = string
+  default     = "latest"
+}

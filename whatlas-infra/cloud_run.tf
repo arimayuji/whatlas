@@ -12,7 +12,7 @@ resource "google_cloud_run_service" "whatlas_api" {
     spec {
       service_account_name = "whatlas-infra-terraform@maximal-backup-463214-j1.iam.gserviceaccount.com"
       containers {
-        image = "southamerica-east1-docker.pkg.dev/maximal-backup-463214-j1/whatlas-repo/whatlas-api"
+        image = "southamerica-east1-docker.pkg.dev/${var.project_id}/whatlas-repo/whatlas-api:${var.image_tag}"
 
         env {
           name = "GOOGLE_APPLICATION_CREDENTIALS_JSON"
