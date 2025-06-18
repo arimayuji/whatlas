@@ -9,7 +9,7 @@ env:
   REGION: southamerica-east1
   REPOSITORY: whatlas-repo
   IMAGE_NAME: whatlas-api
-  TF_VERSION: 1.7.4
+  TF_VERSION: 1.12.2
 
 jobs:
   build-and-deploy-api:
