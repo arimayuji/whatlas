@@ -11,7 +11,7 @@ export async function routes(app: FastifyTypedInstance) {
     {
       schema: {
         tags: ["users"],
-        description: "List users",
+        description: "List users 2",
       },
     },
     () => {
