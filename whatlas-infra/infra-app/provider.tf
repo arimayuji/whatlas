@@ -2,7 +2,7 @@ terraform {
   required_version = "1.12.2"
 
   backend "gcs" {
-    bucket = "meu-bucket-terraform"
+    bucket = "terraform-app"
     prefix = "infra-app/terraform.tfstate"
   }
 
