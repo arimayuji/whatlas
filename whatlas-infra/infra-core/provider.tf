@@ -1,6 +1,11 @@
 terraform {
   required_version = "1.12.2"
 
+  backend "gcs" {
+    bucket = "meu-bucket-terraform"
+    prefix = "infra-app/terraform.tfstate"
+  }
+
   required_providers {
     google = {
       source  = "hashicorp/google"

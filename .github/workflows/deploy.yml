@@ -94,6 +94,7 @@ jobs:
       - name: Terraform Apply (App)
         env:
           TF_VAR_project_id: ${{ env.PROJECT_ID }}
+          TF_VAR_secret_id: ${{ env.SECRET_ID }}
           TF_VAR_cloud_run_service_account_email: ${{ env.CLOUD_RUN_SERVICE_ACCOUNT_EMAIL }}
           TF_VAR_gcp_sa_key_json: ${{ secrets.GCP_SA_KEY }}
           TF_VAR_image_tag: ${{ github.sha }}

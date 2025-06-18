@@ -36,3 +36,8 @@ variable "image_tag" {
   type        = string
   default     = "latest"
 }
+
+variable "secret_id" {
+  description = "ID do Secret Manager"
+  type        = string
+}

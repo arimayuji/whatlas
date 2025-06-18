@@ -18,7 +18,7 @@ resource "google_cloud_run_service" "whatlas_api" {
           name = "GOOGLE_APPLICATION_CREDENTIALS_JSON"
           value_from {
             secret_key_ref {
-               name = google_secret_manager_secret.google_app_credentials.secret_id
+               name = var.secret_id
                key  = "latest"
             }
           }
