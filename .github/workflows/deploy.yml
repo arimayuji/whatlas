@@ -41,7 +41,7 @@ jobs:
 
       - name: Terraform Apply
         run: |
-          cd whatlasinfra
+          cd whatlas-infra
           terraform init
           terraform apply -auto-approve \
             -var="image_tag=${{ github.sha }}"
