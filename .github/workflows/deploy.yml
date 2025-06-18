@@ -5,7 +5,6 @@ on:
     branches: [dev]
 
 env:
-  PROJECT_ID: maximal-backup-463214-j1
   REGION: southamerica-east1
   REPOSITORY: whatlas-repo
   IMAGE_NAME: whatlas-api
@@ -63,7 +62,7 @@ jobs:
 
       - name: Terraform Apply (Core)
         env:
-          TF_VAR_project_id: ${{ env.PROJECT_ID }}
+          TF_VAR_project_id: ${{ secrets.PROJECT_ID }}
           TF_VAR_gcp_sa_key_json: ${{ secrets.GCP_SA_KEY }}
         run: |
           cd whatlas-infra/infra-core
@@ -93,9 +92,9 @@ jobs:
 
       - name: Terraform Apply (App)
         env:
-          TF_VAR_project_id: ${{ env.PROJECT_ID }}
-          TF_VAR_secret_id: ${{ env.SECRET_ID }}
-          TF_VAR_cloud_run_service_account_email: ${{ env.CLOUD_RUN_SERVICE_ACCOUNT_EMAIL }}
+          TF_VAR_project_id: ${{ secrets.PROJECT_ID }}
+          TF_VAR_secret_id: ${{ secrets.SECRET_ID }}
+          TF_VAR_cloud_run_service_account_email: ${{ secrets.CLOUD_RUN_SERVICE_ACCOUNT_EMAIL }}
           TF_VAR_gcp_sa_key_json: ${{ secrets.GCP_SA_KEY }}
           TF_VAR_image_tag: ${{ github.sha }}
         run: |
