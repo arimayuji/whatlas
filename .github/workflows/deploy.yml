@@ -36,7 +36,7 @@ jobs:
           docker buildx build \
             --platform linux/amd64 \
             --push \
-            -t southamerica-east1-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} \
+            -t southamerica-east1-docker.pkg.dev/${{ secrets.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} \
             .
 
   deploy-infra-core:
