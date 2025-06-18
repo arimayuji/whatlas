@@ -39,6 +39,11 @@ jobs:
             -t southamerica-east1-docker.pkg.dev/maximal-backup-463214-j1/whatlas-repo/whatlas-api:${{ github.sha }} \
             .
 
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+         terraform_version: 1.7.5
+
       - name: Terraform Apply
         run: |
           cd whatlas-infra
