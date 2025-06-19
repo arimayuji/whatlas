@@ -9,10 +9,10 @@ import {
 } from "fastify-type-provider-zod";
 import { fastifySwagger } from "@fastify/swagger";
 import { fastifySwaggerUi } from "@fastify/swagger-ui";
-import { routes } from "./routes";
 import { schema } from "./env.schema";
 import fs from "fs";
 import path from "path";
+import { userRoutes } from "./routes/user.route";
 
 const app = fastify().withTypeProvider<ZodTypeProvider>();
 
@@ -66,7 +66,7 @@ app.register(fastifySwaggerUi, {
   routePrefix: "/docs",
 });
 
-app.register(routes);
+app.register(userRoutes);
 
 const port = Number(process.env.PORT || 8080);
 app.listen({ port, host: "0.0.0.0" }).then(() => {
