@@ -8,4 +8,6 @@ export const SpTransStopModel = z.object({
   px: z.number(),
 });
 
+export const SpTransStopResponseModel = z.array(SpTransStopModel);
+
 export type SpTransStop = z.infer<typeof SpTransStopModel>;

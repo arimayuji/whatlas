@@ -5,4 +5,6 @@ export const SpTransCorredorModel = z.object({
   nc: z.string(),
 });
 
+export const SpTransCorredorResponseModel = z.array(SpTransCorredorModel);
+
 export type SpTransCorredor = z.infer<typeof SpTransCorredorModel>;

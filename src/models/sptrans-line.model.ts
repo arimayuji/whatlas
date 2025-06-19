@@ -10,4 +10,6 @@ export const SpTransLineModel = z.object({
   ts: z.string(),
 });
 
+export const SpTransLineResponseModel = z.array(SpTransLineModel);
+
 export type SpTransLine = z.infer<typeof SpTransLineModel>;

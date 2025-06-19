@@ -9,3 +9,8 @@ export const SpTransVehicleModel = z.object({
 });
 
 export type SpTransVehicle = z.infer<typeof SpTransVehicleModel>;
+
+export const LineVehiclesPositionsModel = z.object({
+  hr: z.string(),
+  vs: z.array(SpTransVehicleModel),
+});
