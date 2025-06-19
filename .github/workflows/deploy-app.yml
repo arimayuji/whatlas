@@ -45,4 +45,6 @@ jobs:
             --image=southamerica-east1-docker.pkg.dev/${{ secrets.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} \
             --region=${{ env.REGION }} \
             --platform=managed \
-            --quiet
+            --quiet \
+            --allow-unauthenticated \
+            --service-account=whatlas-infra-terraform@${{ secrets.PROJECT_ID }}.iam.gserviceaccount.com
