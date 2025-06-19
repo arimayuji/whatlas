@@ -12,8 +12,7 @@ export const GoogleTokensSchema = z.object({
   expiresAt: z.string(),
 });
 
-export const UserModel = z.object({
-  id: z.string(),
+export const UserBaseSchema = z.object({
   phone: z.string().regex(/^\+\d{10,15}$/),
   defaultOrigin: LocationSchema,
   destinations: z.array(LocationSchema),
@@ -24,4 +23,9 @@ export const UserModel = z.object({
   updatedAt: z.string(),
 });
 
-export type User = z.infer<typeof UserModel>;
+export const UserSchema = UserBaseSchema.extend({
+  id: z.string(),
+});
+
+export type User = z.infer<typeof UserSchema>;
+export type CreateUserInput = z.infer<typeof UserBaseSchema>;
