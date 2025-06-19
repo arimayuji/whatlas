@@ -40,6 +40,7 @@
     "fastify-type-provider-zod": "^5.0.1",
     "fastq": "^1.19.1",
     "find-my-way": "^9.3.0",
+    "firebase-admin": "^13.4.0",
     "foreground-child": "^3.3.1",
     "get-tsconfig": "^4.10.1",
     "glob": "^11.0.3",
