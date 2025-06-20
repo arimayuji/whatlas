@@ -18,6 +18,55 @@ export async function userRoutes(app: FastifyTypedInstance) {
     userController.findAll
   );
 
+  app.get(
+    "/users/:id",
+    {
+      schema: {
+        tags: ["users"],
+        description: "Get a user by ID",
+        params: z.object({
+          id: z.string(),
+        }),
+        response: {
+          200: UserSchema,
+        },
+      },
+    },
+    userController.findById
+  );
+
+  app.delete(
+    "/users/:id",
+    {
+      schema: {
+        tags: ["users"],
+        description: "Delete a user by ID",
+        params: z.object({
+          id: z.string(),
+        }),
+      },
+    },
+    userController.delete
+  );
+
+  app.put(
+    "/users/:id",
+    {
+      schema: {
+        tags: ["users"],
+        description: "Update a user by ID",
+        params: z.object({
+          id: z.string(),
+        }),
+        body: UserBaseSchema,
+        response: {
+          200: UserSchema,
+        },
+      },
+    },
+    userController.update
+  );
+
   app.post(
     "/users",
     {
