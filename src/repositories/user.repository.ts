@@ -1,37 +1,53 @@
-import { User } from "../models/user.model";
 import { firestore } from "../utils/firebase";
+import { User } from "../models/user.model";
+import { AppError } from "../errors/app-error";
 
 const collection = firestore.collection("users");
 
 export const userRepository = {
-  async findById(id: string): Promise<User | null> {
+  async findAll(): Promise<User[]> {
+    const snapshot = await collection.get();
+
+    return snapshot.docs.map((doc) => doc.data() as User);
+  },
+
+  async findById(id: string): Promise<User> {
     const doc = await collection.doc(id).get();
-    return doc.exists ? (doc.data() as User) : null;
+
+    if (!doc.exists) throw new AppError("User not found", 404);
+
+    return doc.data() as User;
   },
 
   async findByPhone(phone: string): Promise<User | null> {
-    const snapshot = await collection
-      .where("phone", "==", phone)
-      .limit(1)
-      .get();
-    if (snapshot.empty) return null;
-    return snapshot.docs[0].data() as User;
+    const doc = await collection.where("phone", "==", phone).limit(1).get();
+
+    if (doc.empty) throw new AppError("User not found", 404);
+
+    return doc.docs[0].data() as User;
   },
 
   async create(user: User): Promise<void> {
+    const existing = await this.findByPhone(user.phone);
+
+    if (existing) throw new AppError("Phone already registered", 409);
+
     await collection.doc(user.id).set(user);
   },
 
   async update(id: string, data: Partial<User>): Promise<void> {
+    const doc = await collection.doc(id).get();
+
+    if (!doc.exists) throw new AppError("User not found", 404);
+
     await collection.doc(id).update(data);
   },
 
   async delete(id: string): Promise<void> {
-    await collection.doc(id).delete();
-  },
+    const doc = await collection.doc(id).get();
 
-  async findAll(): Promise<User[]> {
-    const snapshot = await collection.get();
-    return snapshot.docs.map((doc) => doc.data() as User);
+    if (!doc.exists) throw new AppError("User not found", 404);
+
+    await collection.doc(id).delete();
   },
 };
