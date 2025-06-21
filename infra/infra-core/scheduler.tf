@@ -1,5 +1,5 @@
 resource "google_service_account" "scheduler_sa" {
-  account_id   = var.cloud_run_service_account_email
+  account_id   = "scheduler-sa"
   display_name = "Scheduler Pub/Sub Publisher"
 }
 
