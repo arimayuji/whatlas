@@ -36,3 +36,8 @@ variable "image_tag" {
   type        = string
   default     = "latest"
 }
+
+variable "timezone" {
+  type    = string
+  default = "America/Sao_Paulo"
+}
