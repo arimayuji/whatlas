@@ -1,23 +1,22 @@
 import { FastifyTypedInstance } from "../@types/fastify.types";
 import { z } from "zod/v4";
-import { sptransService } from "../services/sptrans.service";
+import { SptransCompanyResponseModel } from "../models/sptrans-company.model";
+import { spTransController } from "../controllers/sptrans.controller";
 import { SpTransCorredorResponseModel } from "../models/sptrans-corredor.model";
+import { SpTransLinesModel } from "../models/sptrans-line.model";
 import { SpTransStopResponseModel } from "../models/sptrans-stop.model";
 import { LinePositionResponseModel } from "../models/sptrans-position.model";
-import { LineVehiclesPositionsModel } from "../models/sptrans-vehicle.model";
-import { SpTransLinesModel } from "../models/sptrans-line.model";
 import { LineStopETAModel } from "../models/sptrans-eta-stopline.model";
-import { SptransCompanyResponseModel } from "../models/sptrans-company.model";
+import { LineVehiclesPositionsModel } from "../models/sptrans-vehicle.model";
+
 export async function sptransRoutes(app: FastifyTypedInstance) {
   app.get("/sptrans/companies", {
     schema: {
       tags: ["sptrans"],
       description: "List all SPTrans companies",
-      response: {
-        200: SptransCompanyResponseModel,
-      },
+      response: { 200: SptransCompanyResponseModel },
     },
-    handler: async () => await sptransService.getCompanies(),
+    handler: spTransController.getCompanies,
   });
 
   app.get("/sptrans/corredores", {
@@ -26,7 +25,7 @@ export async function sptransRoutes(app: FastifyTypedInstance) {
       description: "List all SPTrans corridors",
       response: { 200: SpTransCorredorResponseModel },
     },
-    handler: async () => await sptransService.getCorredores(),
+    handler: spTransController.getCorredores,
   });
 
   app.get("/sptrans/lines/search", {
@@ -36,10 +35,7 @@ export async function sptransRoutes(app: FastifyTypedInstance) {
       querystring: z.object({ termosBusca: z.string() }),
       response: { 200: SpTransLinesModel },
     },
-    handler: async (request) => {
-      const { termosBusca } = request.query;
-      return sptransService.searchLines(termosBusca);
-    },
+    handler: spTransController.searchLines,
   });
 
   app.get("/sptrans/lines/search-direction", {
@@ -52,13 +48,7 @@ export async function sptransRoutes(app: FastifyTypedInstance) {
       }),
       response: { 200: SpTransLinesModel },
     },
-    handler: async (request) => {
-      const { termosBusca, sentido } = request.query;
-      return sptransService.searchLineWithDirection(
-        termosBusca,
-        sentido as 1 | 2
-      );
-    },
+    handler: spTransController.searchLineWithDirection,
   });
 
   app.get("/sptrans/stops/search", {
@@ -68,9 +58,7 @@ export async function sptransRoutes(app: FastifyTypedInstance) {
       querystring: z.object({ termosBusca: z.string() }),
       response: { 200: SpTransStopResponseModel },
     },
-    handler: async (request) => {
-      return sptransService.getStopsByTerm(request.query.termosBusca);
-    },
+    handler: spTransController.getStopsByTerm,
   });
 
   app.get("/sptrans/stops/line/:codigoLinha", {
@@ -80,20 +68,16 @@ export async function sptransRoutes(app: FastifyTypedInstance) {
       params: z.object({ codigoLinha: z.string().transform(Number) }),
       response: { 200: SpTransStopResponseModel },
     },
-    handler: async (request) => {
-      return sptransService.getStopsByLine(request.params.codigoLinha);
-    },
+    handler: spTransController.getStopsByLine,
   });
 
   app.get("/sptrans/vehicles/positions", {
     schema: {
       tags: ["sptrans"],
       description: "Get all vehicle positions",
-      response: {
-        200: LinePositionResponseModel,
-      },
+      response: { 200: LinePositionResponseModel },
     },
-    handler: async () => await sptransService.getVehiclePositions(),
+    handler: spTransController.getVehiclePositions,
   });
 
   app.get("/sptrans/vehicles/line/:codigoLinha", {
@@ -101,14 +85,9 @@ export async function sptransRoutes(app: FastifyTypedInstance) {
       tags: ["sptrans"],
       description: "Get vehicle positions by line",
       params: z.object({ codigoLinha: z.string().transform(Number) }),
-      response: {
-        200: LineVehiclesPositionsModel,
-      },
+      response: { 200: LineVehiclesPositionsModel },
     },
-    handler: async (request) =>
-      await sptransService.getVehiclePositionsByLine(
-        request.params.codigoLinha
-      ),
+    handler: spTransController.getVehiclePositionsByLine,
   });
 
   app.get("/sptrans/arrivals/:stopCode/:lineCode", {
@@ -121,11 +100,6 @@ export async function sptransRoutes(app: FastifyTypedInstance) {
       }),
       response: { 200: LineStopETAModel },
     },
-    handler: async (req) => {
-      return sptransService.getArrivalPrediction(
-        req.params.stopCode,
-        req.params.lineCode
-      );
-    },
+    handler: spTransController.getArrivalPrediction,
   });
 }
