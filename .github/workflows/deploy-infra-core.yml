@@ -39,7 +39,7 @@ jobs:
           TF_VAR_project_id: ${{ secrets.PROJECT_ID }}
           TF_VAR_gcp_sa_key_json: ${{ secrets.GCP_SA_KEY }}
         run: |
-          cd whatlas-infra/infra-core
+          cd infra/infra-core
           terraform init
           terraform apply -auto-approve
 
@@ -72,6 +72,6 @@ jobs:
           TF_VAR_gcp_sa_key_json: ${{ secrets.GCP_SA_KEY }}
           TF_VAR_image_tag: ${{ github.sha }}
         run: |
-          cd whatlas-infra/infra-app
+          cd infra/infra-app
           terraform init
           terraform apply -auto-approve
