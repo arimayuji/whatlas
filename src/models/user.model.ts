@@ -14,10 +14,10 @@ export const GoogleTokensSchema = z.object({
 
 export const UserBaseSchema = z.object({
   phone: z.string().regex(/^\+\d{10,15}$/),
-  defaultOrigin: LocationSchema,
-  destinations: z.array(LocationSchema),
+  defaultOrigin: LocationSchema.optional(), 
+  destinations: z.array(LocationSchema).default([]),
   marginInMinutes: z.number().min(0).default(10),
-  googleCalendarConnected: z.boolean(),
+  googleCalendarConnected: z.boolean().default(false),
   googleCalendarTokens: GoogleTokensSchema.optional(),
   createdAt: z.string(),
   updatedAt: z.string(),
