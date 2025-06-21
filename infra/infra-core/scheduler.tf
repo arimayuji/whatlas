@@ -11,7 +11,7 @@ resource "google_project_iam_member" "scheduler_pubsub_publisher" {
 
 resource "google_cloud_scheduler_job" "train_status_job" {
   name        = "train-status-job"
-  description = "Publica no tópico de status dos trens a cada 15 min"
+  description = "Publica no tópico de status dos trens a cada 15 min v1"
   schedule    = "*/15 * * * *"
   time_zone   = var.timezone
 
