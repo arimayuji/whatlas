@@ -4,7 +4,7 @@ on:
   push:
     branches: [dev]
     paths-ignore:
-      - 'infra/**'
+      - "infra/**"
 
 env:
   REGION: southamerica-east1
@@ -45,6 +45,7 @@ jobs:
             --image=southamerica-east1-docker.pkg.dev/${{ secrets.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} \
             --region=${{ env.REGION }} \
             --platform=managed \
+            --set-env-vars NODE_ENV=production,SPTRANS_TOKEN=${{ secrets.SPTRANS_TOKEN }},GOOGLE_API_KEY=${{ secrets.GOOGLE_API_KEY }}, GOOGLE_APPLICATION_CREDENTIALS_JSON=${{ secrets.GCP_SA_KEY }} \
             --quiet \
             --allow-unauthenticated \
             --service-account=whatlas-infra-terraform@${{ secrets.PROJECT_ID }}.iam.gserviceaccount.com
