@@ -14,7 +14,3 @@ export type FastifyTypedInstance = FastifyInstance<
   FastifyBaseLogger,
   ZodTypeProvider
 >;
-
-export type Envs = {
-  GOOGLE_APPLICATION_CREDENTIALS_JSON: string;
-};

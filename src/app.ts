@@ -19,35 +19,10 @@ const app = fastify().withTypeProvider<ZodTypeProvider>();
 app.setValidatorCompiler(validatorCompiler);
 app.setSerializerCompiler(serializerCompiler);
 
-app
-  .register(fastifyEnv, {
-    dotenv: false,
-    schema,
-  })
-  .ready((err) => {
-    if (err) {
-      console.error("❌ Failed to load env vars:", err);
-      process.exit(1);
-    }
-
-    const credentialsJson = process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON;
-    if (!credentialsJson) {
-      console.error("❌ Missing GOOGLE_APPLICATION_CREDENTIALS_JSON");
-      process.exit(1);
-    }
-
-    const tempPath = path.join("/tmp", "gcp-sa.json");
-    try {
-      fs.writeFileSync(tempPath, credentialsJson);
-      process.env.GOOGLE_APPLICATION_CREDENTIALS = tempPath;
-      console.log("✅ Service account written to /tmp/gcp-sa.json");
-    } catch (writeErr) {
-      console.error("❌ Failed to write service account file:", writeErr);
-      process.exit(1);
-    }
-
-    console.log("✅ Environment variables loaded");
-  });
+app.register(fastifyEnv, {
+  dotenv: false,
+  schema,
+});
 
 app.register(fastifyCors, { origin: "*" });
 
