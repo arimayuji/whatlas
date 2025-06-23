@@ -1,5 +1,5 @@
 import { FastifyReply } from "fastify";
-import { AppError } from "../errors/app-error";
+import { AppError } from "../domain/errors/app-error";
 
 export function handleError(error: unknown, reply: FastifyReply) {
   if (error instanceof AppError) {

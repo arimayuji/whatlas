@@ -1,13 +1,13 @@
-import { FastifyTypedInstance } from "../@types/fastify.types";
+import { FastifyTypedInstance } from "../../@types/fastify.types";
 import { z } from "zod/v4";
-import { SptransCompanyResponseModel } from "../models/sptrans-company.model";
+import { SptransCompanyResponseModel } from "../../domain/entities/sptrans-company.model";
 import { spTransController } from "../controllers/sptrans.controller";
-import { SpTransCorredorResponseModel } from "../models/sptrans-corredor.model";
-import { SpTransLinesModel } from "../models/sptrans-line.model";
-import { SpTransStopResponseModel } from "../models/sptrans-stop.model";
-import { LinePositionResponseModel } from "../models/sptrans-position.model";
-import { LineStopETAModel } from "../models/sptrans-eta-stopline.model";
-import { LineVehiclesPositionsModel } from "../models/sptrans-vehicle.model";
+import { SpTransCorredorResponseModel } from "../../domain/entities/sptrans-corredor.model";
+import { LineStopETAModel } from "../../domain/entities/sptrans-eta-stopline.model";
+import { SpTransLinesModel } from "../../domain/entities/sptrans-line.model";
+import { LinePositionResponseModel } from "../../domain/entities/sptrans-position.model";
+import { SpTransStopResponseModel } from "../../domain/entities/sptrans-stop.model";
+import { LineVehiclesPositionsModel } from "../../domain/entities/sptrans-vehicle.model";
 
 export async function sptransRoutes(app: FastifyTypedInstance) {
   app.get("/sptrans/companies", {

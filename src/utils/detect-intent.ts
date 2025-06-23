@@ -1,4 +1,4 @@
-import { ConversationIntent } from "../enums/conversation.enums";
+import { ConversationIntent } from "../domain/enums/conversation.enums";
 
 interface IntentPattern {
   intent: ConversationIntent;

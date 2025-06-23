@@ -1,5 +1,5 @@
 import { z } from "zod/v4";
-import { FastifyTypedInstance } from "../@types/fastify.types";
+import { FastifyTypedInstance } from "../../@types/fastify.types";
 import { googleApiController } from "../controllers/google.controller";
 
 export async function googleApiRoutes(app: FastifyTypedInstance) {

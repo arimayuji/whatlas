@@ -1,6 +1,6 @@
-import { FastifyTypedInstance } from "../@types/fastify.types";
+import { FastifyTypedInstance } from "../../@types/fastify.types";
 import { z } from "zod/v4";
-import { UserSchema, UserBaseSchema } from "../models/user.model";
+import { UserBaseSchema, UserSchema } from "../../domain/entities/user.model";
 import { userController } from "../controllers/user.controller";
 
 export async function userRoutes(app: FastifyTypedInstance) {

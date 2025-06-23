@@ -1,5 +1,5 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { sptransService } from "../services/sptrans.service";
+import { sptransService } from "../domain/services/sptrans.service";
 import { handleError } from "../utils/handle-error";
 
 export const spTransController = {

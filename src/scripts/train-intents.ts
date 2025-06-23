@@ -1,6 +1,6 @@
 import natural from "natural";
 import path from "path";
-import { ConversationIntent } from "../enums/conversation.enums";
+import { ConversationIntent } from "../domain/enums/conversation.enums";
 
 const __dirname = path.resolve();
 const classifier = new natural.BayesClassifier();

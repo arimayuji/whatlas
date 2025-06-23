@@ -2,12 +2,15 @@ import natural from "natural";
 import path from "path";
 import readline from "readline";
 
-import { ConversationIntent } from "../enums/conversation.enums";
+import { ConversationIntent } from "../domain/enums/conversation.enums";
 
 const __dirname = path.resolve();
 
 // Caminho do modelo salvo
-const MODEL_PATH = path.resolve(__dirname, "./src/models/intent-classifier.json");
+const MODEL_PATH = path.resolve(
+  __dirname,
+  "./src/models/intent-classifier.json"
+);
 
 // Interface CLI
 const rl = readline.createInterface({

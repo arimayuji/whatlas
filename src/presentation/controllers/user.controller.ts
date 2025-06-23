@@ -1,8 +1,7 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-
+import { userRepository } from "../repositories/user.repository";
+import { User } from "../models/user.model";
 import { handleError } from "../utils/handle-error";
-import { User } from "../domain/entities/user.model";
-import { userRepository } from "../infra/ repositories/user.repository";
 
 export const userController = {
   async findById(
@@ -15,7 +14,7 @@ export const userController = {
       const user = await userRepository.findById(id);
 
       if (!user) return reply.code(404).send({ message: "User not found" });
-
+      
       reply.send(user);
     } catch (error) {
       handleError(error, reply);

@@ -1,5 +1,5 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { GoogleApiService } from "../services/google.service";
+import { GoogleApiService } from "../domain/services/google.service";
 import { handleError } from "../utils/handle-error";
 
 export const googleApiController = {

@@ -1,11 +1,12 @@
 import * as functions from "firebase-functions";
 import axios from "axios";
 import * as cheerio from "cheerio";
+
+import { firestore } from "../../utils/firebase";
 import {
   TrainStatus,
   TrainStatusSchema,
-} from "../models/current-train-status.model";
-import { firestore } from "../utils/firebase";
+} from "../../domain/entities/current-train-status.model";
 
 export const pubsubTrainStatusListener = functions.pubsub.onMessagePublished(
   "train-status-topic",
