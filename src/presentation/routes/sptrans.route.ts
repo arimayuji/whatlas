@@ -7,7 +7,6 @@ import { SpTransLinesModel } from "../../domain/entities/sptrans-line.model";
 import { LinePositionResponseModel } from "../../domain/entities/sptrans-position.model";
 import { SpTransStopResponseModel } from "../../domain/entities/sptrans-stop.model";
 import { LineVehiclesPositionsModel } from "../../domain/entities/sptrans-vehicle.model";
-import { SpTransGateway } from "../../application/gateways/SpTransGateway";
 import { SpTransController } from "../controllers/sptrans.controller";
 
 export async function sptransRoutes(

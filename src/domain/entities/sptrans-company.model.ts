@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export const SptransCompanyModel = z.object({
   a: z.number(), // código da área da empresa

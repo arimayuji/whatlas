@@ -30,13 +30,13 @@ const trensController = new TrainStatusController(
   new TrainStatusFirestoreRepository()
 );
 
-const app = fastify().withTypeProvider<ZodTypeProvider>();
+const app = fastify({ logger: true }).withTypeProvider<ZodTypeProvider>();
 
 app.setValidatorCompiler(validatorCompiler);
 app.setSerializerCompiler(serializerCompiler);
 
 app.register(fastifyEnv, {
-  dotenv: false,
+  dotenv: true,
   schema,
 });
 
@@ -51,10 +51,6 @@ app.register(fastifySwagger, {
     servers: [],
   },
   transform: jsonSchemaTransform,
-});
-
-app.register(fastifySwaggerUi, {
-  routePrefix: "/docs",
 });
 
 app.register((app, _, done) => {
@@ -75,6 +71,10 @@ app.register((app, _, done) => {
 app.register((app, _, done) => {
   sptransRoutes(app, spTransController);
   done();
+});
+
+app.register(fastifySwaggerUi, {
+  routePrefix: "/docs",
 });
 
 const port = Number(process.env.PORT || 8080);
