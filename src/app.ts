@@ -10,8 +10,6 @@ import {
 import { fastifySwagger } from "@fastify/swagger";
 import { fastifySwaggerUi } from "@fastify/swagger-ui";
 import { schema } from "./env.schema";
-import fs from "fs";
-import path from "path";
 import { userRoutes } from "./presentation/routes/user.route";
 
 const app = fastify().withTypeProvider<ZodTypeProvider>();
