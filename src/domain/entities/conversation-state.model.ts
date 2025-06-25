@@ -4,11 +4,11 @@ import {
   ConversationStep,
 } from "../enums/conversation.enums";
 
-export const ConversationContextSchema = z.record(z.any());
+export const ConversationContextSchema = z.record(z.any(), z.any());
 
 export const ConversationStateSchema = z.object({
-  currentStep: z.nativeEnum(ConversationStep),
-  lastIntent: z.nativeEnum(ConversationIntent),
+  currentStep: z.enum(ConversationStep),
+  lastIntent: z.enum(ConversationIntent),
   contextData: ConversationContextSchema.optional(),
   updatedAt: z.string(),
   expiresAt: z.string().optional(),
