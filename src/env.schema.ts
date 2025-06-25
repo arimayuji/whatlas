@@ -11,5 +11,7 @@ export const schema = {
     PORT: { type: "string" },
     SPTRANS_TOKEN: { type: "string" },
     GOOGLE_API_KEY: { type: "string" },
+    SUPABASE_URL: { type: "string" },
+    SUPABASE_KEY: { type: "string" },
   },
 } as const;

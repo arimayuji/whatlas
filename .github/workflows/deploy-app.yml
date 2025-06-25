@@ -45,7 +45,7 @@ jobs:
             --image=southamerica-east1-docker.pkg.dev/${{ secrets.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} \
             --region=${{ env.REGION }} \
             --platform=managed \
-            --set-env-vars NODE_ENV=production,SPTRANS_TOKEN=${{ secrets.SPTRANS_TOKEN }},GOOGLE_API_KEY=${{ secrets.GOOGLE_API_KEY }} \
+            --set-env-vars NODE_ENV=production,SPTRANS_TOKEN=${{ secrets.SPTRANS_TOKEN }},GOOGLE_API_KEY=${{ secrets.GOOGLE_API_KEY }},SUPABASE_URL=${{ secrets.SUPABASE_URL }},SUPABASE_KEY=${{ secrets.SUPABASE_KEY }} \
             --quiet \
             --allow-unauthenticated \
             --service-account=whatlas-infra-terraform@${{ secrets.PROJECT_ID }}.iam.gserviceaccount.com
