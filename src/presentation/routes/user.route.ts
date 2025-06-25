@@ -1,9 +1,12 @@
 import { FastifyTypedInstance } from "../../@types/fastify.types";
 import { z } from "zod/v4";
 import { UserBaseSchema, UserSchema } from "../../domain/entities/user.model";
-import { userController } from "../controllers/user.controller";
+import { UserController } from "../controllers/user.controller";
 
-export async function userRoutes(app: FastifyTypedInstance) {
+export async function userRoutes(
+  app: FastifyTypedInstance,
+  userController: UserController
+) {
   app.get(
     "/users",
     {

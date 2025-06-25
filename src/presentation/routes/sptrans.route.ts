@@ -1,22 +1,26 @@
 import { FastifyTypedInstance } from "../../@types/fastify.types";
 import { z } from "zod/v4";
 import { SptransCompanyResponseModel } from "../../domain/entities/sptrans-company.model";
-import { spTransController } from "../controllers/sptrans.controller";
 import { SpTransCorredorResponseModel } from "../../domain/entities/sptrans-corredor.model";
 import { LineStopETAModel } from "../../domain/entities/sptrans-eta-stopline.model";
 import { SpTransLinesModel } from "../../domain/entities/sptrans-line.model";
 import { LinePositionResponseModel } from "../../domain/entities/sptrans-position.model";
 import { SpTransStopResponseModel } from "../../domain/entities/sptrans-stop.model";
 import { LineVehiclesPositionsModel } from "../../domain/entities/sptrans-vehicle.model";
+import { SpTransGateway } from "../../application/gateways/SpTransGateway";
+import { SpTransController } from "../controllers/sptrans.controller";
 
-export async function sptransRoutes(app: FastifyTypedInstance) {
+export async function sptransRoutes(
+  app: FastifyTypedInstance,
+  controller: SpTransController
+) {
   app.get("/sptrans/companies", {
     schema: {
       tags: ["sptrans"],
       description: "List all SPTrans companies",
       response: { 200: SptransCompanyResponseModel },
     },
-    handler: spTransController.getCompanies,
+    handler: controller.getCompanies,
   });
 
   app.get("/sptrans/corredores", {
@@ -25,7 +29,7 @@ export async function sptransRoutes(app: FastifyTypedInstance) {
       description: "List all SPTrans corridors",
       response: { 200: SpTransCorredorResponseModel },
     },
-    handler: spTransController.getCorredores,
+    handler: controller.getCorredores,
   });
 
   app.get("/sptrans/lines/search", {
@@ -35,7 +39,7 @@ export async function sptransRoutes(app: FastifyTypedInstance) {
       querystring: z.object({ termosBusca: z.string() }),
       response: { 200: SpTransLinesModel },
     },
-    handler: spTransController.searchLines,
+    handler: controller.searchLines,
   });
 
   app.get("/sptrans/lines/search-direction", {
@@ -48,7 +52,7 @@ export async function sptransRoutes(app: FastifyTypedInstance) {
       }),
       response: { 200: SpTransLinesModel },
     },
-    handler: spTransController.searchLineWithDirection,
+    handler: controller.searchLineWithDirection,
   });
 
   app.get("/sptrans/stops/search", {
@@ -58,7 +62,7 @@ export async function sptransRoutes(app: FastifyTypedInstance) {
       querystring: z.object({ termosBusca: z.string() }),
       response: { 200: SpTransStopResponseModel },
     },
-    handler: spTransController.getStopsByTerm,
+    handler: controller.getStopsByTerm,
   });
 
   app.get("/sptrans/stops/line/:codigoLinha", {
@@ -68,7 +72,7 @@ export async function sptransRoutes(app: FastifyTypedInstance) {
       params: z.object({ codigoLinha: z.string().transform(Number) }),
       response: { 200: SpTransStopResponseModel },
     },
-    handler: spTransController.getStopsByLine,
+    handler: controller.getStopsByLine,
   });
 
   app.get("/sptrans/vehicles/positions", {
@@ -77,7 +81,7 @@ export async function sptransRoutes(app: FastifyTypedInstance) {
       description: "Get all vehicle positions",
       response: { 200: LinePositionResponseModel },
     },
-    handler: spTransController.getVehiclePositions,
+    handler: controller.getVehiclePositions,
   });
 
   app.get("/sptrans/vehicles/line/:codigoLinha", {
@@ -87,7 +91,7 @@ export async function sptransRoutes(app: FastifyTypedInstance) {
       params: z.object({ codigoLinha: z.string().transform(Number) }),
       response: { 200: LineVehiclesPositionsModel },
     },
-    handler: spTransController.getVehiclePositionsByLine,
+    handler: controller.getVehiclePositionsByLine,
   });
 
   app.get("/sptrans/arrivals/:stopCode/:lineCode", {
@@ -100,6 +104,6 @@ export async function sptransRoutes(app: FastifyTypedInstance) {
       }),
       response: { 200: LineStopETAModel },
     },
-    handler: spTransController.getArrivalPrediction,
+    handler: controller.getArrivalPrediction,
   });
 }
