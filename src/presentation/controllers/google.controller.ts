@@ -1,22 +1,48 @@
-import { FastifyReply, FastifyRequest } from "fastify";
-import { GoogleApiService } from "../domain/services/google.service";
-import { handleError } from "../utils/handle-error";
+import { FastifyRequest, FastifyReply } from "fastify";
+import { handleError } from "../../utils/handle-error";
+import { GoogleApiGateway } from "../../application/gateways/GoogleApiGateway";
 
-export const googleApiController = {
+export class GoogleApiController {
+  constructor(private readonly googleApi: GoogleApiGateway) {}
+
   async getDirections(
     request: FastifyRequest<{
-      Querystring: { origin: string; destination: string };
+      Querystring: {
+        origin_lat: string;
+        origin_lng: string;
+        destination_lat: string;
+        destination_lng: string;
+        travelMode: "TRANSIT" | "WALK" | "BICYCLE";
+      };
     }>,
     reply: FastifyReply
   ) {
     try {
-      const { origin, destination } = request.query;
-      const data = await GoogleApiService.getTransitRoute(origin, destination);
+      const {
+        origin_lat,
+        origin_lng,
+        destination_lat,
+        destination_lng,
+        travelMode,
+      } = request.query;
+
+      const data = await this.googleApi.getTransitRoute(
+        {
+          lat: parseFloat(origin_lat),
+          lng: parseFloat(origin_lng),
+        },
+        {
+          lat: parseFloat(destination_lat),
+          lng: parseFloat(destination_lng),
+        },
+        travelMode
+      );
+
       reply.send(data);
     } catch (error) {
       handleError(error, reply);
     }
-  },
+  }
 
   async geocodeAddress(
     request: FastifyRequest<{ Querystring: { address: string } }>,
@@ -24,12 +50,12 @@ export const googleApiController = {
   ) {
     try {
       const { address } = request.query;
-      const data = await GoogleApiService.geocodeAddress(address);
+      const data = await this.googleApi.geocodeAddress(address);
       reply.send(data);
     } catch (error) {
       handleError(error, reply);
     }
-  },
+  }
 
   async getWeather(
     request: FastifyRequest<{ Querystring: { lat: number; lng: number } }>,
@@ -37,12 +63,12 @@ export const googleApiController = {
   ) {
     try {
       const { lat, lng } = request.query;
-      const data = await GoogleApiService.getWeatherByLatLng(lat, lng);
+      const data = await this.googleApi.getWeatherByLatLng({ lat, lng });
       reply.send(data);
     } catch (error) {
       handleError(error, reply);
     }
-  },
+  }
 
   async searchPlace(
     request: FastifyRequest<{
@@ -52,7 +78,7 @@ export const googleApiController = {
   ) {
     try {
       const { query, lat, lng } = request.query;
-      const data = await GoogleApiService.searchPlace(
+      const data = await this.googleApi.searchPlace(
         query,
         lat && lng ? { lat, lng } : undefined
       );
@@ -60,5 +86,5 @@ export const googleApiController = {
     } catch (error) {
       handleError(error, reply);
     }
-  },
-};
+  }
+}
