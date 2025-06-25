@@ -1,7 +1,7 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { userRepository } from "../repositories/user.repository";
-import { User } from "../models/user.model";
-import { handleError } from "../utils/handle-error";
+import { userRepository } from "../../infra/repositories/user.repository";
+import { handleError } from "../../utils/handle-error";
+import { User } from "../../domain/entities/user.model";
 
 export const userController = {
   async findById(

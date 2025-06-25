@@ -1,4 +1,3 @@
-// src/infra/repositories/user.repository.ts
 import { firestore } from "../../utils/firebase";
 import { AppError } from "../../domain/errors/app-error";
 import { User } from "../../domain/entities/user.model";

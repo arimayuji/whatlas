@@ -5,6 +5,8 @@ export const schema = {
     "PORT",
     "SPTRANS_TOKEN",
     "GOOGLE_API_KEY",
+    "SUPABASE_URL",
+    "SUPABASE_KEY",
   ],
   properties: {
     NODE_ENV: { type: "string" },
