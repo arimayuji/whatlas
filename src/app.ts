@@ -11,6 +11,24 @@ import { fastifySwagger } from "@fastify/swagger";
 import { fastifySwaggerUi } from "@fastify/swagger-ui";
 import { schema } from "./env.schema";
 import { userRoutes } from "./presentation/routes/user.route";
+import { GoogleApiController } from "./presentation/controllers/google.controller";
+import { HttpGoogleApiGateway } from "./infra/gateways/google-api.gateway";
+import { UserController } from "./presentation/controllers/user.controller";
+import { SpTransController } from "./presentation/controllers/sptrans.controller";
+import { SpTransHttpGateway } from "./infra/gateways/sptrans.gateway";
+import { TrainStatusController } from "./presentation/controllers/train-status.controller";
+import { TrainStatusFirestoreRepository } from "./infra/repositories/train-status.repository";
+import { googleApiRoutes } from "./presentation/routes/google.route";
+import { trensStatusRoute } from "./presentation/routes/trens-status.route";
+import { sptransRoutes } from "./presentation/routes/sptrans.route";
+import { UserRepositoryFirestore } from "./infra/repositories/user.repository";
+
+const googleController = new GoogleApiController(new HttpGoogleApiGateway());
+const userController = new UserController(new UserRepositoryFirestore());
+const spTransController = new SpTransController(new SpTransHttpGateway());
+const trensController = new TrainStatusController(
+  new TrainStatusFirestoreRepository()
+);
 
 const app = fastify().withTypeProvider<ZodTypeProvider>();
 
@@ -39,7 +57,25 @@ app.register(fastifySwaggerUi, {
   routePrefix: "/docs",
 });
 
-app.register(userRoutes);
+app.register((app, _, done) => {
+  googleApiRoutes(app, googleController);
+  done();
+});
+
+app.register((app, _, done) => {
+  userRoutes(app, userController);
+  done();
+});
+
+app.register((app, _, done) => {
+  trensStatusRoute(app, trensController);
+  done();
+});
+
+app.register((app, _, done) => {
+  sptransRoutes(app, spTransController);
+  done();
+});
 
 const port = Number(process.env.PORT || 8080);
 app.listen({ port, host: "0.0.0.0" }).then(() => {
