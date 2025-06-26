@@ -22,12 +22,20 @@ import { googleApiRoutes } from "./presentation/routes/google.route";
 import { trensStatusRoute } from "./presentation/routes/trens-status.route";
 import { sptransRoutes } from "./presentation/routes/sptrans.route";
 import { UserRepositoryFirestore } from "./infra/repositories/user.repository";
+import { findNearestStopRoutes } from "./presentation/routes/find-nearest.route";
+import { FindNearestStopController } from "./presentation/controllers/find-nearest-stop.controller";
+import { FindNearestStopUseCase } from "./application/usecases/FindNearestStopUseCase";
+import { GeoRepository } from "./infra/repositories/geo.repository";
+import { supabase } from "./infra/clients/supabase.client";
 
 const googleController = new GoogleApiController(new HttpGoogleApiGateway());
 const userController = new UserController(new UserRepositoryFirestore());
 const spTransController = new SpTransController(new SpTransHttpGateway());
 const trensController = new TrainStatusController(
   new TrainStatusFirestoreRepository()
+);
+const findNearestController = new FindNearestStopController(
+  new FindNearestStopUseCase(new GeoRepository(supabase))
 );
 
 const app = fastify({ logger: true }).withTypeProvider<ZodTypeProvider>();
@@ -55,6 +63,11 @@ app.register(fastifySwagger, {
 
 app.register((app, _, done) => {
   googleApiRoutes(app, googleController);
+  done();
+});
+
+app.register((app, _, done) => {
+  findNearestStopRoutes(app,findNearestController);
   done();
 });
 
