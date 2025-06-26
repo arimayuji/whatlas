@@ -2,34 +2,16 @@ import { z } from "zod/v4";
 import { FastifyTypedInstance } from "../../@types/fastify.types";
 import { GoogleApiController } from "../controllers/google.controller";
 import { FastifyRequest, FastifyReply } from "fastify";
-
-const directionsQuerySchema = z.object({
-  origin_lat: z.string(),
-  origin_lng: z.string(),
-  destination_lat: z.string(),
-  destination_lng: z.string(),
-  travelMode: z.enum(["TRANSIT", "WALK", "BICYCLE"]),
-});
-
-const geocodeQuerySchema = z.object({
-  address: z.string(),
-});
-
-const weatherQuerySchema = z.object({
-  lat: z.coerce.number(),
-  lng: z.coerce.number(),
-});
-
-const placeSearchQuerySchema = z.object({
-  query: z.string(),
-  lat: z.coerce.number().optional(),
-  lng: z.coerce.number().optional(),
-});
-
-type DirectionsQuery = z.infer<typeof directionsQuerySchema>;
-type GeocodeQuery = z.infer<typeof geocodeQuerySchema>;
-type WeatherQuery = z.infer<typeof weatherQuerySchema>;
-type PlaceSearchQuery = z.infer<typeof placeSearchQuerySchema>;
+import {
+  DirectionsQuery,
+  directionsQuerySchema,
+  GeocodeQuery,
+  geocodeQuerySchema,
+  PlaceSearchQuery,
+  placeSearchQuerySchema,
+  WeatherQuery,
+  weatherQuerySchema,
+} from "../@types/google-routes.type";
 
 export async function googleApiRoutes(
   app: FastifyTypedInstance,
