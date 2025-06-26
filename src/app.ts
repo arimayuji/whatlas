@@ -26,14 +26,15 @@ import { findNearestStopRoutes } from "./presentation/routes/find-nearest.route"
 import { FindNearestStopController } from "./presentation/controllers/find-nearest-stop.controller";
 import { FindNearestStopUseCase } from "./application/usecases/FindNearestStopUseCase";
 import { GeoRepository } from "./infra/repositories/geo.repository";
-import { supabase } from "./infra/clients/supabase.client";
+import dotenv from "dotenv";
+import { createSupabaseClient } from "./infra/clients/supabase.client";
 
+dotenv.config();
 const googleController = new GoogleApiController(new HttpGoogleApiGateway());
 const userController = new UserController(new UserRepositoryFirestore());
 const spTransController = new SpTransController(new SpTransHttpGateway());
-const trensController = new TrainStatusController(
-  new TrainStatusFirestoreRepository()
-);
+const trensController = new TrainStatusController(new TrainStatusFirestoreRepository());
+const supabase = createSupabaseClient();
 const findNearestController = new FindNearestStopController(
   new FindNearestStopUseCase(new GeoRepository(supabase))
 );
@@ -43,54 +44,64 @@ const app = fastify({ logger: true }).withTypeProvider<ZodTypeProvider>();
 app.setValidatorCompiler(validatorCompiler);
 app.setSerializerCompiler(serializerCompiler);
 
-app.register(fastifyEnv, {
-  dotenv: true,
-  schema,
-});
+const start = async () => {
+  try {
+    await app.register(fastifyEnv, {
+      confKey: "config",
+      schema,
+      dotenv: true,
+    });
+    app.log.info("Environment variables loaded");
 
-app.register(fastifyCors, { origin: "*" });
+    await app.register(fastifyCors, { origin: "https://your-allowed-domain.com" });
 
-app.register(fastifySwagger, {
-  openapi: {
-    info: {
-      title: "Whatlas API",
-      version: "1.0.0",
-    },
-    servers: [],
-  },
-  transform: jsonSchemaTransform,
-});
+    await app.register(fastifySwagger, {
+      openapi: {
+        info: {
+          title: "Whatlas API",
+          version: "1.0.0",
+        },
+        servers: [{ url: `http://localhost:${process.env.PORT || 8080}` }],
+      },
+      transform: jsonSchemaTransform,
+    });
 
-app.register((app, _, done) => {
-  googleApiRoutes(app, googleController);
-  done();
-});
+    await app.register(fastifySwaggerUi, { routePrefix: "/docs" });
 
-app.register((app, _, done) => {
-  findNearestStopRoutes(app,findNearestController);
-  done();
-});
+    await app.register((instance, opts, done) => {
+      googleApiRoutes(instance, googleController);
+      done();
+    });
+    await app.register((instance, opts, done) => {
+      findNearestStopRoutes(instance, findNearestController);
+      done();
+    });
+    await app.register((instance, opts, done) => {
+      userRoutes(instance, userController);
+      done();
+    });
+    await app.register((instance, opts, done) => {
+      trensStatusRoute(instance, trensController);
+      done();
+    });
+    await app.register((instance, opts, done) => {
+      sptransRoutes(instance, spTransController);
+      done();
+    });
 
-app.register((app, _, done) => {
-  userRoutes(app, userController);
-  done();
-});
+    const port = parseInt(process.env.PORT || "8080", 10);
+    if (isNaN(port)) {
+      throw new Error("Invalid port number");
+    }
 
-app.register((app, _, done) => {
-  trensStatusRoute(app, trensController);
-  done();
-});
+    await app.listen({ port, host: "0.0.0.0" });
+    app.log.info(`🚀 Server running on port ${port}`);
 
-app.register((app, _, done) => {
-  sptransRoutes(app, spTransController);
-  done();
-});
+    await app.ready();
+  } catch (err) {
+    app.log.error("Failed to start server:", err);
+    process.exit(1);
+  }
+};
 
-app.register(fastifySwaggerUi, {
-  routePrefix: "/docs",
-});
-
-const port = Number(process.env.PORT || 8080);
-app.listen({ port, host: "0.0.0.0" }).then(() => {
-  console.log(`🚀 Server running on port ${port}`);
-});
+start();
