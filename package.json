@@ -112,6 +112,7 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "generate:types": "npx supabase gen types typescript --project-id wecvdhftldlmiyvuwtad --schema public > src/@types/supabase.types.ts",
     "build": "tsc",
     "start": "node dist/app.js",
     "dev": "tsx --watch src/app.ts"
