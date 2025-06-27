@@ -28,12 +28,12 @@ export class GoogleApiController {
 
       const data = await this.googleApi.getTransitRoute(
         {
-          lat: parseFloat(origin_lat),
-          lng: parseFloat(origin_lng),
+          latitude: parseFloat(origin_lat),
+          longitude: parseFloat(origin_lng),
         },
         {
-          lat: parseFloat(destination_lat),
-          lng: parseFloat(destination_lng),
+          latitude: parseFloat(destination_lat),
+          longitude: parseFloat(destination_lng),
         },
         travelMode
       );
@@ -58,12 +58,12 @@ export class GoogleApiController {
   }
 
   async getWeather(
-    request: FastifyRequest<{ Querystring: { lat: number; lng: number } }>,
+    request: FastifyRequest<{ Querystring: { latitude: number; longitude: number } }>,
     reply: FastifyReply
   ) {
     try {
-      const { lat, lng } = request.query;
-      const data = await this.googleApi.getWeatherByLatLng({ lat, lng });
+      const { latitude, longitude } = request.query;
+      const data = await this.googleApi.getWeatherByLatLng({ latitude, longitude });
       reply.send(data);
     } catch (error) {
       handleError(error, reply);
@@ -72,15 +72,15 @@ export class GoogleApiController {
 
   async searchPlace(
     request: FastifyRequest<{
-      Querystring: { query: string; lat?: number; lng?: number };
+      Querystring: { query: string; latitude?: number; longitude?: number };
     }>,
     reply: FastifyReply
   ) {
     try {
-      const { query, lat, lng } = request.query;
+      const { query, latitude, longitude } = request.query;
       const data = await this.googleApi.searchPlace(
         query,
-        lat && lng ? { lat, lng } : undefined
+        latitude && longitude ? { latitude, longitude } : undefined
       );
       reply.send(data);
     } catch (error) {

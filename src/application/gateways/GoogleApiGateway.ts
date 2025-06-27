@@ -10,7 +10,7 @@ export interface GoogleApiGateway {
     staticMapUrls: string[];
   }>;
   geocodeAddress(address: string): Promise<any>;
-  getWeatherByLatLng({ lat, lng }: LatLang): Promise<any>;
-  getForecastByLatLng({ lat, lng }: LatLang): Promise<any>;
+  getWeatherByLatLng({ latitude,longitude }: LatLang): Promise<any>;
+  getForecastByLatLng({ latitude,longitude }: LatLang): Promise<any>;
   searchPlace(query: string, location?: LatLang): Promise<any>;
 }

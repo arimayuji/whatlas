@@ -2,8 +2,8 @@ import { z } from "zod/v4";
 
 export const LocationSchema = z.object({
   label: z.string(),
-  lat: z.number(),
-  lng: z.number(),
+  latitude: z.number(),
+  longitude: z.number(),
 });
 
 export const GoogleTokensSchema = z.object({

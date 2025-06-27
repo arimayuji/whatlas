@@ -5,8 +5,8 @@ import { FindNearestQuery } from '../@types/find-nearest.type';
 
 const findNearestSchema = z.object({
   tableName: z.string(),
-  lat: z.coerce.number(),
-  lng: z.coerce.number(),
+  latitude: z.coerce.number(),
+  longitude: z.coerce.number(),
 });
 
 export class FindNearestStopController {
@@ -14,12 +14,12 @@ export class FindNearestStopController {
 
   async handle(req: FastifyRequest<{ Querystring: FindNearestQuery }>, res: FastifyReply) {
     try {
-      const { tableName, lat, lng } = findNearestSchema.parse(req.query);
+      const { tableName, latitude, longitude } = findNearestSchema.parse(req.query);
 
       const result = await this.useCase.execute({
         tableName: tableName as any, 
-        latitude: lat,
-        longitude: lng,
+        latitude: latitude,
+        longitude: longitude,
       });
 
       return res.status(200).send(result);

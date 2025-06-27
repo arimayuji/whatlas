@@ -4,11 +4,11 @@ import { schemasMap } from "../@types/supabase-tables.type";
 export class GeoRepository implements GeoRepository {
   constructor(private readonly client: SupabaseClient) { }
   
-  async findNearestStop(tableName: string, lat: number, lng: number) {
+  async findNearestStop(tableName: string, latitude: number, longitude: number) {
     const { data, error } = await this.client.rpc('find_nearest', {
       table_name: tableName,
-      lat,
-      lng,
+      latitude,
+      longitude,
     });
 
     if (error) throw new Error(error.message);

@@ -1,3 +1,3 @@
 export interface GeoRepository {
-  findNearestStop(tableName: string, lat: number, lng: number): Promise<any>;
+  findNearestStop(tableName: string, latitude: number, longitude: number): Promise<any>;
 }

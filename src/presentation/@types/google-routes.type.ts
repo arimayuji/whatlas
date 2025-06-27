@@ -13,14 +13,14 @@ export const geocodeQuerySchema = z.object({
 });
 
 export const weatherQuerySchema = z.object({
-  lat: z.coerce.number(),
-  lng: z.coerce.number(),
+  latitude: z.coerce.number(),
+  longitude: z.coerce.number(),
 });
 
 export const placeSearchQuerySchema = z.object({
   query: z.string(),
-  lat: z.coerce.number().optional(),
-  lng: z.coerce.number().optional(),
+  latitude: z.coerce.number().optional(),
+  longitude: z.coerce.number().optional(),
 });
 
 export type DirectionsQuery = z.infer<typeof directionsQuerySchema>;

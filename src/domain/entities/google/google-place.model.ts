@@ -7,8 +7,8 @@ export const PlacesSearchResponseSchema = z.object({
       formatted_address: z.string().optional(),
       geometry: z.object({
         location: z.object({
-          lat: z.number(),
-          lng: z.number(),
+          latitude: z.number(),
+          longitude: z.number(),
         }),
       }),
       place_id: z.string(),
