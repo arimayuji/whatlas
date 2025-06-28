@@ -3,33 +3,39 @@ import { FastifyTypedInstance } from "../../@types/fastify.types";
 import { GoogleApiController } from "../controllers/google.controller";
 import { FastifyRequest, FastifyReply } from "fastify";
 import {
-  DirectionsQuery,
-  directionsQuerySchema,
   GeocodeQuery,
   geocodeQuerySchema,
   PlaceSearchQuery,
   placeSearchQuerySchema,
   WeatherQuery,
   weatherQuerySchema,
+  RoutesPostData,
+  routesPostSchema,
 } from "../@types/google-routes.type";
 
 export async function googleApiRoutes(
   app: FastifyTypedInstance,
   controller: GoogleApiController
 ) {
-  app.get(
-    "/google/directions",
+  app.post(
+    "/google/directions/route",
     {
       schema: {
         tags: ["google"],
-        querystring: directionsQuerySchema,
+        body:routesPostSchema,
+        response: {
+          200: z.object({
+            route: z.any(),
+            staticMapUrls: z.array(z.string()),
+          }),
+        },
       },
     },
     (
-      req: FastifyRequest<{ Querystring: DirectionsQuery }>,
+      req: FastifyRequest<{Body:RoutesPostData }>,
       res: FastifyReply
-    ) => controller.getDirections(req, res)
-  );
+    ) => controller.getDirectionsRoute(req, res)
+  )
 
   app.get(
     "/google/geocode",

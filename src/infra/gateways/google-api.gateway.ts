@@ -1,14 +1,24 @@
 import axios from "axios";
 import { GoogleApiGateway } from "../../application/gateways/GoogleApiGateway";
 import { LatLang } from "../../@types/latlang.type";
+import { GetTransitRouteType } from "../../application/@types/google-gateway.type";
 
 const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY!;
 
 export class HttpGoogleApiGateway implements GoogleApiGateway {
   async getTransitRoute(
-    origin: LatLang,
-    destination: LatLang,
-    travelMode: "TRANSIT" | "WALK" | "BICYCLE"
+    { 
+      destination,
+      origin,
+      travelMode,
+      departureTime,  
+      arrivalTime,
+      trafficModel,
+      transitPreferences,
+      intermediates,
+      computeAlternativeRoutes,
+    }
+      : GetTransitRouteType
   ): Promise<{
     route: any;
     staticMapUrls: string[];
@@ -16,12 +26,25 @@ export class HttpGoogleApiGateway implements GoogleApiGateway {
     const response = await axios.post(
       "https://routes.googleapis.com/directions/v2:computeRoutes",
       {
-        origin: { location: { latLng: origin } },
-        destination: { location: { latLng: destination } },
+        origins: { location: { lat_lng: origin } },
+        destinations: { location: { lat_lng: destination } },
         travelMode,
-        routingPreference: "TRAFFIC_AWARE",
-        computeAlternativeRoutes: true,
-        languageCode: "pt-BR",
+        departureTime,
+        arrivalTime,
+        trafficModel,
+        computeAlternativeRoutes,
+        transitPreferences,
+        intermediates: intermediates?.map((intermediate) => ({
+          place_id: intermediate.placeId,
+          address: intermediate.address,
+          vehicle_stop_over: intermediate.vehicleStopOver,
+          via: intermediate.via,
+          side_of_road: intermediate.sideOfRoad,
+          location: { lat_lng: intermediate.location.latLng },
+        })),
+        routing_preference: "TRAFFIC_AWARE",
+        language_code: "pt-BR",
+        region_code: "BR",
         units: "METRIC",
       },
       {

@@ -1,10 +1,19 @@
 import { LatLang } from "../../@types/latlang.type";
+import { GetTransitRouteType } from "../@types/google-gateway.type";
 
 export interface GoogleApiGateway {
   getTransitRoute(
-    origin: LatLang,
-    destination: LatLang,
-    travelMode: "TRANSIT" | "WALK" | "BICYCLE"
+    { 
+      destination,
+      origin,
+      travelMode,
+      departureTime,  
+      arrivalTime,
+      trafficModel,
+      transitPreferences,
+      intermediates,
+    }
+      : GetTransitRouteType
   ): Promise<{
     route: any;
     staticMapUrls: string[];
