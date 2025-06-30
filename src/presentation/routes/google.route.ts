@@ -1,4 +1,3 @@
-import { z } from "zod/v4";
 import { FastifyTypedInstance } from "../../@types/fastify.types";
 import { GoogleApiController } from "../controllers/google.controller";
 import { FastifyRequest, FastifyReply } from "fastify";
@@ -9,9 +8,9 @@ import {
   placeSearchQuerySchema,
   WeatherQuery,
   weatherQuerySchema,
-  RoutesPostData,
-  routesPostSchema,
 } from "../@types/google-routes.type";
+
+import { getTransitRouteResponseSchema, getTransitRouteSchema, GetTransitRouteType } from "../../application/@types/google-gateway.type";
 
 export async function googleApiRoutes(
   app: FastifyTypedInstance,
@@ -22,17 +21,14 @@ export async function googleApiRoutes(
     {
       schema: {
         tags: ["google"],
-        body:routesPostSchema,
+        body: getTransitRouteSchema,
         response: {
-          200: z.object({
-            route: z.any(),
-            staticMapUrls: z.array(z.string()),
-          }),
+          200: getTransitRouteResponseSchema,
         },
       },
     },
     (
-      req: FastifyRequest<{Body:RoutesPostData }>,
+      req: FastifyRequest<{Body:GetTransitRouteType }>,
       res: FastifyReply
     ) => controller.getDirectionsRoute(req, res)
   )

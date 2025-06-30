@@ -1,57 +1,61 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 import { handleError } from "../../utils/handle-error";
 import { GoogleApiGateway } from "../../application/gateways/GoogleApiGateway";
-import { RoutesPostData } from "../@types/google-routes.type";
+import { GetTransitRouteType } from "../../application/@types/google-gateway.type";
 
 export class GoogleApiController {
   constructor(private readonly googleApi: GoogleApiGateway) {}
 
   async getDirectionsRoute(
     request: FastifyRequest<{
-      Body: RoutesPostData
+      Body: GetTransitRouteType
     }>,
     reply: FastifyReply
   ) {
     try {
       const {
-        origin_lat,
-        origin_lng,
-        destination_lat,
-        destination_lng,
+        destination,
+        origin,
+        routeModifiers,
         travelMode,
-        arrival_time,
-        departure_time,
-        computeAlternativeRoutes,
-        intermediates
+        departureTime,
+        arrivalTime,
+        trafficModel,
+        transitPreferences,
+        intermediates,
+        routingPreference,
+        computeAlternateRoutes,
+        extraComputations,
+        languageCode,
+        regionCode,
+        optimizeWaypointOrder,
+        requestedReferenceRoutes,
+        units,
+        polylineQuality,
+        polylineEncoding,
       } = request.body;
 
       const data = await this.googleApi.getTransitRoute(
         {
-          destination: {
-           latitude: parseFloat(destination_lat),
-           longitude: parseFloat(destination_lng),
-          },
-          origin: {
-            latitude: parseFloat(origin_lat),
-            longitude: parseFloat(origin_lng),
-          },
+          destination,
+          origin,
+          routeModifiers,
           travelMode,
-          computeAlternativeRoutes: computeAlternativeRoutes,
-          departureTime: departure_time ? departure_time : undefined,
-          arrivalTime: arrival_time ? arrival_time : undefined,
-          intermediates: intermediates?.map((intermediate) => ({
-            placeId: intermediate.placeId,
-            address: intermediate.address,
-            vehicleStopOver: intermediate.vehicleStopOver ?? false,
-            via: intermediate.via ?? false,
-            sideOfRoad: intermediate.sideOfRoad ?? false,
-            location: {
-              latLng: {
-                latitude: intermediate.location.latLng.latitude,        
-                longitude: intermediate.location.latLng.longitude,
-              },
-            },
-          }))
+          departureTime,
+          arrivalTime,
+          trafficModel,
+          transitPreferences,
+          intermediates,
+          routingPreference,
+          computeAlternateRoutes,
+          extraComputations,
+          languageCode,
+          regionCode,
+          optimizeWaypointOrder,
+          requestedReferenceRoutes,
+          units,
+          polylineQuality,
+          polylineEncoding,
        }
       );
 

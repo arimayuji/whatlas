@@ -1,5 +1,5 @@
 import { LatLang } from "../../@types/latlang.type";
-import { GetTransitRouteType } from "../@types/google-gateway.type";
+import { GetGeocodingResponseType,  GetSearchPlaceResponseType,  GetTransitRouteResponseType, GetTransitRouteType, GetWeatherResponseType } from "../@types/google-gateway.type";
 
 export interface GoogleApiGateway {
   getTransitRoute(
@@ -12,14 +12,22 @@ export interface GoogleApiGateway {
       trafficModel,
       transitPreferences,
       intermediates,
+      computeAlternateRoutes,
+      routingPreference,
+      polylineQuality,
+      polylineEncoding,
+      routeModifiers,
+      extraComputations,
+      languageCode,
+      regionCode,
+      units,
+      optimizeWaypointOrder,
+      requestedReferenceRoutes,
     }
       : GetTransitRouteType
-  ): Promise<{
-    route: any;
-    staticMapUrls: string[];
-  }>;
-  geocodeAddress(address: string): Promise<any>;
-  getWeatherByLatLng({ latitude,longitude }: LatLang): Promise<any>;
+  ): Promise<GetTransitRouteResponseType>;
+  geocodeAddress(address: string): Promise< GetGeocodingResponseType>;
+  getWeatherByLatLng({ latitude,longitude }: LatLang): Promise<GetWeatherResponseType>;
   getForecastByLatLng({ latitude,longitude }: LatLang): Promise<any>;
-  searchPlace(query: string, location?: LatLang): Promise<any>;
+  searchPlace(query: string, location?: LatLang): Promise<GetSearchPlaceResponseType>;
 }
