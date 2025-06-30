@@ -445,7 +445,7 @@ export const GetWeatherSchema = z.object({
   cloudCover: z.number(),
 })
 
-export type GetWeatherType = z.infer<typeof GetWeatherSchema>
+export type GetWeatherResponseType = z.infer<typeof GetWeatherSchema>
 
 const AddressTypes = z.enum([
   "street_address",
@@ -524,3 +524,25 @@ export const GetGeocodingSchema = z.object({
   ),
   status : z.array(ResultsTypes),
 })
+
+export type GetGeocodingResponseType = z.infer<typeof GetGeocodingSchema>
+
+export const GetSearchTextResponseSchema = z.object({
+  textQuery: z.string(),
+  languageCode: z.string(),
+  regionCode: z.string(),
+  rankPreference: z.enum(["RANK_PREFERENCE_UNSPECIFIED", "DISTANCE", "RELEVANCE"]),
+})
+
+export const GetSearchPlaceResponseSchema = z.object({
+  name: z.string(),
+  id: z.string(),
+  displayName: LocalizedText,
+  types: z.array(z.string()),
+  formattedAddress: z.string(),
+  shortFormattedAddress: z.string(),
+  location: LatLangType,
+  googleMapsUri: z.string(),
+})
+
+export type GetSearchPlaceResponseType = z.infer<typeof GetSearchPlaceResponseSchema>
