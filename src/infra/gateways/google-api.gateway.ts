@@ -1,7 +1,7 @@
 import axios from "axios";
 import { GoogleApiGateway } from "../../application/gateways/GoogleApiGateway";
 import { LatLang } from "../../@types/latlang.type";
-import { GetTransitRouteType } from "../../application/@types/google-gateway.type";
+import { GetTransitRouteResponseType, GetTransitRouteType, GetWeatherResponseType } from "../../application/@types/google-gateway.type";
 
 const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY!;
 
@@ -16,24 +16,25 @@ export class HttpGoogleApiGateway implements GoogleApiGateway {
       trafficModel,
       transitPreferences,
       intermediates,
-      computeAlternativeRoutes,
+      computeAlternateRoutes,
+      routeModifiers,
+      extraComputations,
+      languageCode,
+      regionCode,
+      units,
+      routingPreference,
+      requestedReferenceRoutes,
+      polylineQuality,
+      optimizeWaypointOrder,
+      polylineEncoding,
     }
       : GetTransitRouteType
-  ): Promise<{
-    route: any;
-    staticMapUrls: string[];
-  }> {
-    const response = await axios.post(
+  ): Promise< GetTransitRouteResponseType > {
+    const response = await axios.post<GetTransitRouteResponseType>(
       "https://routes.googleapis.com/directions/v2:computeRoutes",
       {
-        origins: { location: { lat_lng: origin } },
-        destinations: { location: { lat_lng: destination } },
-        travelMode,
-        departureTime,
-        arrivalTime,
-        trafficModel,
-        computeAlternativeRoutes,
-        transitPreferences,
+        origin,
+        destination,
         intermediates: intermediates?.map((intermediate) => ({
           place_id: intermediate.placeId,
           address: intermediate.address,
@@ -42,10 +43,22 @@ export class HttpGoogleApiGateway implements GoogleApiGateway {
           side_of_road: intermediate.sideOfRoad,
           location: { lat_lng: intermediate.location.latLng },
         })),
-        routing_preference: "TRAFFIC_AWARE",
-        language_code: "pt-BR",
-        region_code: "BR",
-        units: "METRIC",
+        travelMode,
+        routingPreference,
+        polylineQuality,
+        polylineEncoding,
+        departureTime,
+        arrivalTime,
+        computeAlternateRoutes,
+        routeModifiers,
+        languageCode: languageCode || "pt-BR",
+        regionCode: regionCode || "BR",
+        units,
+        optimizeWaypointOrder,
+        requestedReferenceRoutes,
+        extraComputations,
+        trafficModel,
+        transitPreferences,
       },
       {
         headers: {
@@ -57,18 +70,10 @@ export class HttpGoogleApiGateway implements GoogleApiGateway {
       }
     );
 
-    const staticMapUrls = response.data.routes
-      .map((route: any) => {
-        const polyline = route.polyline?.encodedPolyline;
-        return polyline
-          ? `https://maps.googleapis.com/maps/api/staticmap?size=600x400&markers=color:red|${origin.latitude},${origin.longitude}&markers=color:blue|${destination.latitude},${destination.longitude}&path=enc:${polyline}&key=${process.env.GOOGLE_API_KEY}`
-          : null;
-      })
-      .filter((url: string | null) => url);
-
     return {
-      route: response.data,
-      staticMapUrls,
+      fallbackInfo: response.data.fallbackInfo,
+      geocodingResult: response.data.geocodingResult,
+      routes: response.data.routes,
     };
   }
 
@@ -77,10 +82,11 @@ export class HttpGoogleApiGateway implements GoogleApiGateway {
       `https://maps.googleapis.com/maps/api/geocode/json`,
       {
         params: {
-          address,
+          address: address.replace(/ /g, "+"),
           language: "pt-BR",
           region: "BR",
           key: GOOGLE_API_KEY,
+          components: "country:BR|locality:São+Paulo|",
         },
       }
     );
@@ -88,13 +94,15 @@ export class HttpGoogleApiGateway implements GoogleApiGateway {
   }
 
   async getWeatherByLatLng({ latitude,longitude }: LatLang): Promise<any> {
-    const response = await axios.get(
+    const response = await axios.get<GetWeatherResponseType>(
       `https://weather.googleapis.com/v1/currentConditions:lookup`,
       {
         params: {
           key: GOOGLE_API_KEY,
           "location.latitude": latitude,
           "location.longitude": longitude,
+          unitsSystem: "METRIC",
+          languageCode: "pt-BR",
         },
       }
     );
@@ -117,16 +125,20 @@ export class HttpGoogleApiGateway implements GoogleApiGateway {
   }
 
   async searchPlace(query: string, location?: LatLang): Promise<any> {
-    const response = await axios.get(
-      "https://maps.googleapis.com/maps/api/place/textsearch/json",
+    const response = await axios.post(
+      "https://places.googleapis.com/v1/places:searchText",
       {
-        params: {
-          query,
-          region: "BR",
-          language: "pt-BR",
-          key: GOOGLE_API_KEY,
-          location: location ? `${location.latitude},${location.longitude}` : undefined,
-          radius: location ? 3000 : undefined,
+        textQuery: query,
+        languageCode: "pt-BR",
+        regionCode: "BR",
+        pageSize: 5,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "X-Goog-Api-Key": process.env.GOOGLE_API_KEY,
+          "X-Goog-FieldMask":
+            "places.displayName,places.formattedAddress,places.name,places.id,places.types,places.shortFormattedAddress,places.location,places.googleMapsUri,",
         },
       }
     );
