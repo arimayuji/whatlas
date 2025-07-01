@@ -124,7 +124,7 @@ export class HttpGoogleApiGateway implements GoogleApiGateway {
     return response.data;
   }
 
-  async searchPlace(query: string, location?: LatLang): Promise<any> {
+  async searchPlace(query: string): Promise<any> {
     const response = await axios.post(
       "https://places.googleapis.com/v1/places:searchText",
       {
