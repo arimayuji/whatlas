@@ -28,10 +28,24 @@ import { FindNearestStopUseCase } from "./application/usecases/FindNearestStopUs
 import { GeoRepository } from "./infra/repositories/geo.repository";
 import dotenv from "dotenv";
 import { createSupabaseClient } from "./infra/clients/supabase.client";
+import { CreateUserUseCase } from "./application/usecases/CreateUserUseCase";
+import { UpdateUserUseCase } from "./application/usecases/UpdateUserUseCase";
+import { GetUserByIdUseCase } from "./application/usecases/GetUserByIdUseCase";
+import { DeleteUserUseCase } from "./application/usecases/DeleteUserUseCase";
+import { GetAllUsersUseCase } from "./application/usecases/GetAllUsersUseCase";
+
+
+const userRepository = new UserRepositoryFirestore()
+const createUserUseCase = new CreateUserUseCase(userRepository)
+const updateUserUseCase = new UpdateUserUseCase(userRepository)
+const getUserByIdUseCase = new GetUserByIdUseCase(userRepository)
+const getAllUsersUseCase = new GetAllUsersUseCase(userRepository)
+const deleteUserUseCase = new DeleteUserUseCase(userRepository)
 
 dotenv.config();
 const googleController = new GoogleApiController(new HttpGoogleApiGateway());
-const userController = new UserController(new UserRepositoryFirestore());
+const userController = new UserController(createUserUseCase, updateUserUseCase, getUserByIdUseCase, getAllUsersUseCase, deleteUserUseCase);
+
 const spTransController = new SpTransController(new SpTransHttpGateway());
 const trensController = new TrainStatusController(new TrainStatusFirestoreRepository());
 const supabase = createSupabaseClient();
