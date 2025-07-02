@@ -19,7 +19,7 @@ export async function userRoutes(
       },
     },
     userController.findAll
-  );
+  )
 
   app.get(
     "/users/:id",

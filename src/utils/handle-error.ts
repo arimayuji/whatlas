@@ -1,4 +1,4 @@
-import { FastifyReply } from "fastify";
+import { FastifyInstance, FastifyReply, FastifyRequest,  } from "fastify";
 import { AppError } from "../domain/errors/app-error";
 import { InvalidMarginMinutesError } from "../domain/errors/InvalidMarginMinutesError";
 import { InvalidDestinationError } from "../domain/errors/InvalidDestinationError";
@@ -6,35 +6,42 @@ import { MoreThanThreeDestinationsError } from "../domain/errors/MoreThanThreeDe
 import { MoreThanFifteenMinutesInMarginError } from "../domain/errors/MoreThanFifteenMinutesInMarginError";
 import { UserNotExistsError } from "../domain/errors/UserNotExistsError";
 import { UserAlreadyExistsError } from "../domain/errors/UserAlreadyExists";
+import { responseError } from "./responseError";
 
-export function handleError(error: unknown, reply: FastifyReply) {
-  if (error instanceof AppError) {
-    return reply.code(error.statusCode).send({ error: error.message });
-  }
+export async  function handleError(app: FastifyInstance) {
 
-  if (error instanceof InvalidMarginMinutesError) {
-    return reply.code(400).send({ error: error.message });
-  }
-
-  if(error instanceof InvalidDestinationError) {
-    return reply.code(400).send({ error: error.message });
-  }
-
-  if( error instanceof MoreThanThreeDestinationsError) {
-    return reply.code(400).send({ error: error.message });
-  }
-
-  if(error instanceof MoreThanFifteenMinutesInMarginError) {
-    return reply.code(400).send({ error: error.message });
-  }
-
-  if( error instanceof UserNotExistsError) {
-    return reply.code(404).send({ error: error.message });
-  }
-
-  if (error instanceof UserAlreadyExistsError) {
-    return reply.code(409).send({ error: error.message });
-  }
-
-  return reply.code(500).send({ error: "Internal server error" });
+  app.setErrorHandler((
+    error: Error,
+    request: FastifyRequest,
+    reply : FastifyReply
+  )=> {
+    if (error instanceof AppError) {
+      return responseError(reply, error.message, error.name);
+    }
+  
+    if (error instanceof InvalidMarginMinutesError) {
+      return responseError(reply, error.message, error.name);
+    }
+  
+    if(error instanceof InvalidDestinationError) {
+      return responseError(reply, error.message, error.name);
+    }
+  
+    if( error instanceof MoreThanThreeDestinationsError) {
+      return responseError(reply, error.message, error.name);
+    }
+  
+    if(error instanceof MoreThanFifteenMinutesInMarginError) {
+      return responseError(reply, error.message, error.name);
+    }
+  
+    if( error instanceof UserNotExistsError) {
+      return responseError(reply, error.message, error.name);
+    }
+  
+    if (error instanceof UserAlreadyExistsError) {
+      return responseError(reply, error.message, error.name);
+    }
+    return reply.code(500).send({ error: "Internal server error" });
+  }) 
 }
