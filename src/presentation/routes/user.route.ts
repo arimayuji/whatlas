@@ -28,7 +28,7 @@ export async function userRoutes(
         tags: ["users"],
         description: "Get a user by ID",
         params: z.object({
-          id: z.string(),
+          id: z.string().nonempty(),
         }),
         response: {
           200: UserSchema,
@@ -45,7 +45,7 @@ export async function userRoutes(
         tags: ["users"],
         description: "Delete a user by ID",
         params: z.object({
-          id: z.string(),
+          id: z.string().nonempty(),
         }),
       },
     },
@@ -59,7 +59,7 @@ export async function userRoutes(
         tags: ["users"],
         description: "Update a user by ID",
         params: z.object({
-          id: z.string(),
+          id: z.string().nonempty(),
         }),
         body: UserSchema,
         response: {
