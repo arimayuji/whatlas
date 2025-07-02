@@ -9,7 +9,6 @@ import { UserAlreadyExistsError } from "../domain/errors/UserAlreadyExists";
 import { responseError } from "./responseError";
 
 export async  function handleError(app: FastifyInstance) {
-
   app.setErrorHandler((
     error: Error,
     request: FastifyRequest,

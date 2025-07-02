@@ -1,24 +1,19 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 import { TrainStatusRepository } from "../../domain/repositories/TrainStatusRepository";
-import { handleError } from "../../utils/handle-error";
+import { responseSuccess } from "../../utils/responseSuccess";
 
 export class TrainStatusController {
   constructor(private readonly trainStatusRepository: TrainStatusRepository) {}
 
   async findAll(_: FastifyRequest, reply: FastifyReply) {
-    try {
       const data = await this.trainStatusRepository.getAll();
-      return reply.send(data);
-    } catch (error) {
-      handleError(error, reply);
-    }
+      return responseSuccess(reply, data, "Founded all lines", 200);
   }
 
   async findById(
     request: FastifyRequest<{ Params: { id: string } }>,
     reply: FastifyReply
   ) {
-    try {
       const { id } = request.params;
       const data = await this.trainStatusRepository.getById(id);
 
@@ -26,9 +21,6 @@ export class TrainStatusController {
         return reply.code(404).send({ message: "Linha não encontrada" });
       }
 
-      return reply.send(data);
-    } catch (error) {
-      handleError(error, reply);
-    }
+      return responseSuccess(reply, data, "Founded line", 200);
   }
 }
