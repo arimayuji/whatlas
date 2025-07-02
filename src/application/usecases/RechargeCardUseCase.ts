@@ -2,15 +2,15 @@ import { NegativeRechargeError } from "../../domain/errors/NegativeRechargeError
 import { BalanceRepository } from "../../domain/repositories/BalanceRepository"
 
 interface RechargeCardUseCaseDTO {
-  cardId: string
+  userId: string
   amount: number
 }
 
 export class RechargeCardUseCase {
   constructor(private readonly balanceRepository: BalanceRepository) { }
   
-  async execute({ cardId, amount }: RechargeCardUseCaseDTO): Promise<void> {
-    const currentBalance = await this.balanceRepository.getUserCardBalance(cardId)
+  async execute({ userId, amount }: RechargeCardUseCaseDTO): Promise<void> {
+    const currentBalance = await this.balanceRepository.getUserCardBalance(userId)
 
     if (amount < 0) {
       throw new NegativeRechargeError()
@@ -18,6 +18,6 @@ export class RechargeCardUseCase {
 
     const newBalance = currentBalance + amount
 
-    await this.balanceRepository.updateUserCardBalance(cardId, { currentBalance: newBalance, updatedAt: new Date().toISOString() })
+    await this.balanceRepository.updateUserCardBalance(userId, { currentBalance: newBalance, updatedAt: new Date().toISOString() })
   }
 }

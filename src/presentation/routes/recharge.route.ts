@@ -1,0 +1,59 @@
+import { FastifyTypedInstance } from "../../@types/fastify.types";
+import { RechargeModelSchema } from "../../domain/entities/recharge.model";
+import { RechargeController } from "../controllers/recharge.controller";
+import { z } from "zod/v4";
+
+export async function rechargeRoute(
+  app: FastifyTypedInstance,
+  controller: RechargeController
+) {
+  app.get(
+      "/recharges/:userId",
+      {
+        schema: {
+          tags: ["recharges"],
+          description: "Get recharges by user ID",
+          params: z.object({
+            userId: z.string().nonempty(),
+          }),
+          response: {
+            200: z.array(RechargeModelSchema),
+          },
+        },
+      },
+      controller.getRechargeHistory
+    ),
+  app.post(
+      "/recharges/:userId",
+      {
+        schema: {
+          tags: ["recharges"],
+          description: "Recharge a user's card",
+          params: z.object({
+            userId: z.string().nonempty(),
+          }),
+          body: z.object({
+            recharge: z.number().nonnegative(),
+          }),
+          response: {
+            200: RechargeModelSchema,
+          },
+        },
+      },
+      controller.rechargeCard
+    ),
+    app.delete(
+      "/recharges/:userId/:rechargeId",
+      {
+        schema: {
+          tags: ["recharges"],
+          description: "Delete a recharge by ID",
+          params: z.object({
+            userId: z.string().nonempty(),
+            rechargeId: z.string().nonempty(),
+          }),
+        },
+      },
+      controller.deleteRecharge
+    )
+}
