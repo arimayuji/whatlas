@@ -3,9 +3,9 @@ import { TRIP_VEHICLE, VEHICLE_TICKETS_PRICES } from "./trip.model";
 
 export const UserCardBalanceModel = z.object({
   userId: z.string(),
-  currentBalance: z.number(),
-  remainingBusTickets: z.number(),
-  remainingSubwayTickets: z.number(),
+  currentBalance: z.number().default(0),
+  remainingBusTickets: z.number().nonnegative(),
+  remainingSubwayTickets: z.number().nonnegative(),
   createdAt: z.string(),
   updatedAt: z.string(),
 }).transform(userCardBalance => {

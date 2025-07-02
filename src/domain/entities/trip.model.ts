@@ -32,9 +32,9 @@ export const TripModel = z.object({
   id: z.string(),
   steps: z.array(TripStepModel),
   status: TRIP_STATUS,
-  totalAmount: z.number(),
+  totalAmount: z.number().nonnegative().default(0),
   isFavorite: z.boolean().default(false),
-  duration: z.number(),
+  duration: z.number().nonnegative(),
   weatherCondition: z.object({
     weatherCondition: WeatherCondition,
     temperature: Temperature,
