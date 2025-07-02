@@ -1,5 +1,6 @@
 import { FastifyTypedInstance } from "../../@types/fastify.types";
 import { TripModel } from "../../domain/entities/trip.model";
+import { ZOD_ERRORS_MESSAGES } from "../../utils/error-messages";
 import { TripController } from "../controllers/trip.controller";
 import { z } from "zod/v4";
 
@@ -27,7 +28,7 @@ export async function tripRoute(
           tags: ["trips"],
           description: "Create a new trip",
           params: z.object({
-            userId: z.string().nonempty(),
+            userId: z.string().nonempty({error: ZOD_ERRORS_MESSAGES["string.nonempty"]}),
           }),
           body: TripModel,
           response: {
@@ -44,8 +45,8 @@ export async function tripRoute(
           tags: ["trips"],
           description: "Delete a trip",
           params: z.object({
-            userId: z.string().nonempty(),
-            tripId: z.string().nonempty(),
+            userId: z.string().nonempty({error: ZOD_ERRORS_MESSAGES["string.nonempty"]}),
+            tripId: z.string().nonempty({error: ZOD_ERRORS_MESSAGES["string.nonempty"]}),
           }),
           response: {
             200: TripModel,

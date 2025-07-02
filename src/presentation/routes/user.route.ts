@@ -2,6 +2,7 @@ import { FastifyTypedInstance } from "../../@types/fastify.types";
 import { z } from "zod/v4";
 import {  UserSchema } from "../../domain/entities/user.model";
 import { UserController } from "../controllers/user.controller";
+import { ZOD_ERRORS_MESSAGES } from "../../utils/error-messages";
 
 export async function userRoutes(
   app: FastifyTypedInstance,
@@ -28,7 +29,7 @@ export async function userRoutes(
         tags: ["users"],
         description: "Get a user by ID",
         params: z.object({
-          id: z.string().nonempty(),
+          id: z.string().nonempty({error: ZOD_ERRORS_MESSAGES["string.nonempty"]}),
         }),
         response: {
           200: UserSchema,
@@ -45,7 +46,7 @@ export async function userRoutes(
         tags: ["users"],
         description: "Delete a user by ID",
         params: z.object({
-          id: z.string().nonempty(),
+          id: z.string().nonempty({error: ZOD_ERRORS_MESSAGES["string.nonempty"]}),
         }),
       },
     },
@@ -59,7 +60,7 @@ export async function userRoutes(
         tags: ["users"],
         description: "Update a user by ID",
         params: z.object({
-          id: z.string().nonempty(),
+          id: z.string().nonempty({error: ZOD_ERRORS_MESSAGES["string.nonempty"]}),
         }),
         body: UserSchema,
         response: {

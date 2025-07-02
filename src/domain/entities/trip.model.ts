@@ -1,6 +1,7 @@
 import { z } from "zod/v4";
 import { LocationSchema } from "./user.model";
 import { Precipitation, Temperature, WeatherCondition } from "../../application/@types/google-gateway.type";
+import { ZOD_ERRORS_MESSAGES } from "../../utils/error-messages";
 
 const TRIP_TYPE = z.enum(["TRIP", "RETURN"])
 const TRIP_STATUS = z.enum(["PENDING", "COMPLETED", "CANCELED"])
@@ -34,7 +35,7 @@ export const TripModel = z.object({
   status: TRIP_STATUS,
   totalAmount: z.number().nonnegative().default(0),
   isFavorite: z.boolean().default(false),
-  duration: z.number().nonnegative(),
+  duration: z.number().nonnegative({error: ZOD_ERRORS_MESSAGES["number.nonnegative"]}),
   weatherCondition: z.object({
     weatherCondition: WeatherCondition,
     temperature: Temperature,
