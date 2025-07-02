@@ -319,7 +319,7 @@ const TimeZone = z.object({
   version: z.string(),
 })
 
-const WeatherCondition = z.object({
+export const WeatherCondition = z.object({
   iconBaseUrl: z.string(),
   description: LocalizedText,
   type: z.enum([
@@ -354,7 +354,7 @@ const PrecipitationProbability = z.object({
 
 })
 
-const Precipitation = z.object({
+export const Precipitation = z.object({
   probability: z.enum([
   "PRECIPITATION_TYPE_UNSPECIFIED",
   "NONE",
