@@ -13,40 +13,26 @@ import { schema } from "./env.schema";
 import { userRoutes } from "./presentation/routes/user.route";
 import { GoogleApiController } from "./presentation/controllers/google.controller";
 import { HttpGoogleApiGateway } from "./infra/gateways/google-api.gateway";
-import { UserController } from "./presentation/controllers/user.controller";
-import { SpTransController } from "./presentation/controllers/sptrans.controller";
-import { SpTransHttpGateway } from "./infra/gateways/sptrans.gateway";
 import { TrainStatusController } from "./presentation/controllers/train-status.controller";
 import { TrainStatusFirestoreRepository } from "./infra/repositories/train-status.repository";
 import { googleApiRoutes } from "./presentation/routes/google.route";
 import { trensStatusRoute } from "./presentation/routes/trens-status.route";
 import { sptransRoutes } from "./presentation/routes/sptrans.route";
-import { UserRepositoryFirestore } from "./infra/repositories/user.repository";
 import { findNearestStopRoutes } from "./presentation/routes/find-nearest.route";
 import { FindNearestStopController } from "./presentation/controllers/find-nearest-stop.controller";
 import { FindNearestStopUseCase } from "./application/usecases/FindNearestStopUseCase";
 import { GeoRepository } from "./infra/repositories/geo.repository";
 import dotenv from "dotenv";
 import { createSupabaseClient } from "./infra/clients/supabase.client";
-import { CreateUserUseCase } from "./application/usecases/CreateUserUseCase";
-import { UpdateUserUseCase } from "./application/usecases/UpdateUserUseCase";
-import { GetUserByIdUseCase } from "./application/usecases/GetUserByIdUseCase";
-import { DeleteUserUseCase } from "./application/usecases/DeleteUserUseCase";
-import { GetAllUsersUseCase } from "./application/usecases/GetAllUsersUseCase";
-
-
-const userRepository = new UserRepositoryFirestore()
-const createUserUseCase = new CreateUserUseCase(userRepository)
-const updateUserUseCase = new UpdateUserUseCase(userRepository)
-const getUserByIdUseCase = new GetUserByIdUseCase(userRepository)
-const getAllUsersUseCase = new GetAllUsersUseCase(userRepository)
-const deleteUserUseCase = new DeleteUserUseCase(userRepository)
+import { handleError } from "./utils/handle-error";
+import { makeUserController } from "./infra/factories/user-controller.factory";
+import { makeSpTransController } from "./infra/factories/sptrans-controller.factory";
 
 dotenv.config();
 const googleController = new GoogleApiController(new HttpGoogleApiGateway());
-const userController = new UserController(createUserUseCase, updateUserUseCase, getUserByIdUseCase, getAllUsersUseCase, deleteUserUseCase);
+const userController = makeUserController();
+const spTransController = makeSpTransController();
 
-const spTransController = new SpTransController(new SpTransHttpGateway());
 const trensController = new TrainStatusController(new TrainStatusFirestoreRepository());
 const supabase = createSupabaseClient();
 const findNearestController = new FindNearestStopController(
@@ -81,6 +67,8 @@ const start = async () => {
     });
 
     await app.register(fastifySwaggerUi, { routePrefix: "/docs" });
+
+    await handleError(app);
 
     await app.register((instance, opts, done) => {
       googleApiRoutes(instance, googleController);
