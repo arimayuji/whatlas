@@ -2,7 +2,7 @@ import { z } from "zod/v4";
 import { TRIP_VEHICLE, VEHICLE_TICKETS_PRICES } from "./trip.model";
 import { ZOD_ERRORS_MESSAGES } from "../../utils/error-messages";
 
-export const UserCardBalanceModel = z.object({
+export const UserCardBalanceModelSchema = z.object({
   userId: z.string(),
   currentBalance: z.number().nonnegative().default(0),
   remainingBusTickets: z.number().nonnegative().default(0),
@@ -17,4 +17,4 @@ export const UserCardBalanceModel = z.object({
   }
 })
 
-export type UserCardBalance = z.infer<typeof UserCardBalanceModel>
+export type UserCardBalance = z.infer<typeof UserCardBalanceModelSchema>

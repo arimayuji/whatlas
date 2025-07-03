@@ -6,7 +6,7 @@ interface UpdateUserCardDTO {
   userId: string;
 }
 
-export class UpdateUserCardUseCase {
+export class GetUserCardUseCase {
   constructor(private balanceRepository: BalanceRepository, private userRepository: UserRepository) { }
   
   async execute({ userId }: UpdateUserCardDTO): Promise<void> {
