@@ -6,7 +6,9 @@ export class RechargeRepositoryFirestore implements RechargeRepository{
   private readonly collection = firestore.collection("users")
 
   async addRecharge(recharge: Recharge, userId: string): Promise<Recharge> {
-    const snapshot = await this.collection.doc(userId).collection("recharges").add(recharge);
+    const { id, ...rechargeWithoutId } = recharge;
+    
+    const snapshot = await this.collection.doc(userId).collection("recharges").add(rechargeWithoutId);
 
     const doc = (await snapshot.get()).data() as Recharge;
 

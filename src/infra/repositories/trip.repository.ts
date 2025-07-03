@@ -6,7 +6,9 @@ export class TripRepositoryFirestorre implements TripRepository{
   private readonly collection = firestore.collection("users");
 
   async addUserTrip(trip: Trip, userId: string): Promise<Trip> {
-    const snapshot = await this.collection.doc(userId).collection("trips").add(trip);
+    const { id, ...tripWithoutId } = trip;
+
+    const snapshot = await this.collection.doc(userId).collection("trips").add(tripWithoutId);
 
     const doc =( await snapshot.get()). data() as Trip;
 

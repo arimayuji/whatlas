@@ -1,4 +1,7 @@
 import { z } from "zod/v4";
+import { RechargeModelSchema } from "./recharge.model";
+import { TripModelSchema } from "./trip.model";
+import { UserCardBalanceModelSchema } from "./user-card-balance.model";
 
 export const LocationSchema = z.object({
   label: z.string(),
@@ -22,6 +25,9 @@ export const UserSchema = z.object({
   marginInMinutes: z.number().min(0).default(10),
   googleCalendarConnected: z.boolean().default(false),
   googleCalendarTokens: GoogleTokensSchema.optional(),
+  recharges: z.array(RechargeModelSchema).default([]),
+  trips: z.array(TripModelSchema).default([]),
+  balance:  UserCardBalanceModelSchema,
   createdAt: z.string(),
   updatedAt: z.string().nullable(),
 });

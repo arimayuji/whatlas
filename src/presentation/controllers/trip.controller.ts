@@ -16,6 +16,7 @@ export class TripController {
     const { trip } = req.body;
 
     const result = await this.addUserTripUseCase.execute({ userId, trip });
+
     return responseSuccess(res, result, "Trip added with success", 200);
   }
 
@@ -23,6 +24,7 @@ export class TripController {
     const { userId, tripId } = req.params;
 
     const result = await this.deleteUserTripUseCase.execute({ userId, tripId });
+
     return responseSuccess(res, result, "Trip deleted with success", 200);
   }
 
@@ -30,6 +32,7 @@ export class TripController {
     const { userId } = req.params;  
 
     const result = await this.getUserHistoryTripsUseCase.execute({ userId });
+    
     return responseSuccess(res, result, "Trips found with success", 200);
   }
 }

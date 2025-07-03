@@ -21,6 +21,13 @@ export class CreateUserUseCase {
       throw new UserAlreadyExistsError();
     }
     
-    return this.userRepository.create({createdAt,firstName,id,lastName,username,destinations: [], defaultOrigin: undefined, marginInMinutes: 10, googleCalendarConnected: false, googleCalendarTokens: undefined, updatedAt: createdAt});
+    return this.userRepository.create({
+      createdAt, firstName, id, lastName, username, destinations: [], defaultOrigin: undefined, marginInMinutes: 10, googleCalendarConnected: false, googleCalendarTokens: undefined, updatedAt: createdAt, recharges: [], trips: [], balance: {
+        currentBalance: 0,
+        remainingBusTickets: 0,
+        remainingSubwayTickets: 0,
+        createdAt: createdAt,
+        updatedAt: createdAt
+    }});
   }
 }

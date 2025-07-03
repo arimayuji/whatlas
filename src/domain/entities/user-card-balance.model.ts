@@ -3,7 +3,6 @@ import { TRIP_VEHICLE, VEHICLE_TICKETS_PRICES } from "./trip.model";
 import { ZOD_ERRORS_MESSAGES } from "../../utils/error-messages";
 
 export const UserCardBalanceModelSchema = z.object({
-  userId: z.string(),
   currentBalance: z.number().nonnegative().default(0),
   remainingBusTickets: z.number().nonnegative().default(0),
   remainingSubwayTickets: z.number().nonnegative({error: ZOD_ERRORS_MESSAGES["number.nonnegative"]}).default(0),
