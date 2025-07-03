@@ -1,3 +1,4 @@
+import { FastifyReply, FastifyRequest } from "fastify";
 import { FastifyTypedInstance } from "../../@types/fastify.types";
 import { RechargeModelSchema } from "../../domain/entities/recharge.model";
 import { ZOD_ERRORS_MESSAGES } from "../../utils/error-messages";
@@ -22,7 +23,7 @@ export async function rechargeRoute(
           },
         },
       },
-      controller.getRechargeHistory
+     (req: FastifyRequest<{Params : {userId: string}}>, res: FastifyReply) => controller.getRechargeHistory(req, res)
     ),
   app.post(
       "/recharges/:userId",
@@ -41,7 +42,7 @@ export async function rechargeRoute(
           },
         },
       },
-      controller.rechargeCard
+      (req: FastifyRequest<{Params : {userId: string}, Body: {recharge: number}}>, res: FastifyReply) => controller.rechargeCard(req, res)
     ),
     app.delete(
       "/recharges/:userId/:rechargeId",
@@ -55,6 +56,6 @@ export async function rechargeRoute(
           }),
         },
       },
-      controller.deleteRecharge
+      (req: FastifyRequest<{Params : {userId: string, rechargeId: string}}>, res: FastifyReply) => controller.deleteRecharge(req, res)
     )
 }

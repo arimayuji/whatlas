@@ -1,5 +1,6 @@
+import { FastifyReply, FastifyRequest } from "fastify";
 import { FastifyTypedInstance } from "../../@types/fastify.types";
-import { TripModel } from "../../domain/entities/trip.model";
+import { Trip, TripModelSchema } from "../../domain/entities/trip.model";
 import { ZOD_ERRORS_MESSAGES } from "../../utils/error-messages";
 import { TripController } from "../controllers/trip.controller";
 import { z } from "zod/v4";
@@ -15,11 +16,11 @@ export async function tripRoute(
         tags: ["trips"],
         description: "List all trips",
         response: {
-          200: z.array(TripModel),
+          200: z.array(TripModelSchema),
         },
       },
     },
-    tripController.getUserHistoryTrips
+    (req: FastifyRequest<{Params : {userId: string}}>, res: FastifyReply) => tripController.getUserHistoryTrips(req, res)
   ),
   app.post(
       "/trips/:userId",
@@ -30,13 +31,13 @@ export async function tripRoute(
           params: z.object({
             userId: z.string().nonempty({error: ZOD_ERRORS_MESSAGES["string.nonempty"]}),
           }),
-          body: TripModel,
+          body: TripModelSchema,
           response: {
-            200: TripModel,
+            200: TripModelSchema,
           },
         }
       },
-      tripController.addTrip
+    (req:FastifyRequest<{Params : {userId: string}, Body : {trip: Trip}}>, res: FastifyReply) => tripController.addTrip(req, res)
     ),
     app.delete(
       "/trips/:userId/:tripId",
@@ -49,10 +50,10 @@ export async function tripRoute(
             tripId: z.string().nonempty({error: ZOD_ERRORS_MESSAGES["string.nonempty"]}),
           }),
           response: {
-            200: TripModel,
+            200: TripModelSchema,
           },
         }
       },
-      tripController.deleteTrip
+      (req:FastifyRequest<{Params : {userId: string, tripId: string}}>, res: FastifyReply) => tripController.deleteTrip(req, res)
     )
 }

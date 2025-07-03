@@ -1,6 +1,7 @@
 import { FastifyTypedInstance } from "../../@types/fastify.types";
 import { z } from "zod/v4";
 import { TrainStatusController } from "../controllers/train-status.controller";
+import { FastifyRequest } from "fastify";
 
 export async function trensStatusRoute(
   app: FastifyTypedInstance,
@@ -14,7 +15,7 @@ export async function trensStatusRoute(
         description: "Listar status atual de todas as linhas de trem",
       },
     },
-    controller.findAll
+   (req,res) => controller.findAll(req, res)
   );
 
   app.get(
@@ -28,6 +29,6 @@ export async function trensStatusRoute(
         }),
       },
     },
-    controller.findById
+    (req:  FastifyRequest<{ Params: { id: string } }>, res) => controller.findById(req, res)
   );
 }

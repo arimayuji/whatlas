@@ -8,6 +8,7 @@ import { LinePositionResponseModel } from "../../domain/entities/sptrans-positio
 import { SpTransStopResponseModel } from "../../domain/entities/sptrans-stop.model";
 import { LineVehiclesPositionsModel } from "../../domain/entities/sptrans-vehicle.model";
 import { SpTransController } from "../controllers/sptrans.controller";
+import { FastifyReply, FastifyRequest } from "fastify";
 
 export async function sptransRoutes(
   app: FastifyTypedInstance,
@@ -19,8 +20,9 @@ export async function sptransRoutes(
       description: "List all SPTrans companies",
       response: { 200: SptransCompanyResponseModel },
     },
-    handler: controller.getCompanies,
-  });
+  },
+    (req: FastifyRequest, res: FastifyReply) => controller.getCompanies(req, res)
+  );
 
   app.get("/sptrans/corredores", {
     schema: {
@@ -28,8 +30,9 @@ export async function sptransRoutes(
       description: "List all SPTrans corridors",
       response: { 200: SpTransCorredorResponseModel },
     },
-    handler: controller.getCorredores,
-  });
+  },
+    (req: FastifyRequest, res: FastifyReply) => controller.getCorredores(req, res)
+  );
 
   app.get("/sptrans/lines/search", {
     schema: {
@@ -38,8 +41,9 @@ export async function sptransRoutes(
       querystring: z.object({ termosBusca: z.string() }),
       response: { 200: SpTransLinesModel },
     },
-    handler: controller.searchLines,
-  });
+  },
+    (req:FastifyRequest<{ Querystring: { termosBusca: string } }>, res: FastifyReply) => controller.searchLines(req, res)
+  );
 
   app.get("/sptrans/lines/search-direction", {
     schema: {
@@ -51,8 +55,11 @@ export async function sptransRoutes(
       }),
       response: { 200: SpTransLinesModel },
     },
-    handler: controller.searchLineWithDirection,
-  });
+  },
+    (req: FastifyRequest<{
+      Querystring: { termosBusca: string; sentido: 1 | 2 };
+    }>, res: FastifyReply) => controller.searchLineWithDirection(req, res)
+  );
 
   app.get("/sptrans/stops/search", {
     schema: {
@@ -61,8 +68,9 @@ export async function sptransRoutes(
       querystring: z.object({ termosBusca: z.string() }),
       response: { 200: SpTransStopResponseModel },
     },
-    handler: controller.getStopsByTerm,
-  });
+  },
+    (req: FastifyRequest<{ Querystring: { termosBusca: string } }>, res: FastifyReply) => controller.searchLines(req, res)
+  );
 
   app.get("/sptrans/stops/line/:codigoLinha", {
     schema: {
@@ -71,8 +79,9 @@ export async function sptransRoutes(
       params: z.object({ codigoLinha: z.string().transform(Number) }),
       response: { 200: SpTransStopResponseModel },
     },
-    handler: controller.getStopsByLine,
-  });
+  },
+    (req: FastifyRequest<{ Params: { codigoLinha: number } }>, res: FastifyReply) => controller.getStopsByLine(req, res)
+  );
 
   app.get("/sptrans/vehicles/positions", {
     schema: {
@@ -80,8 +89,9 @@ export async function sptransRoutes(
       description: "Get all vehicle positions",
       response: { 200: LinePositionResponseModel },
     },
-    handler: controller.getVehiclePositions,
-  });
+  },
+    (req: FastifyRequest, res: FastifyReply) => controller.getVehiclePositions(req, res)
+  );
 
   app.get("/sptrans/vehicles/line/:codigoLinha", {
     schema: {
@@ -90,8 +100,9 @@ export async function sptransRoutes(
       params: z.object({ codigoLinha: z.string().transform(Number) }),
       response: { 200: LineVehiclesPositionsModel },
     },
-    handler: controller.getVehiclePositionsByLine,
-  });
+  },
+    (req: FastifyRequest<{ Params: { codigoLinha: number } }>, res: FastifyReply) => controller.getVehiclePositionsByLine(req, res)
+  );
 
   app.get("/sptrans/arrivals/:stopCode/:lineCode", {
     schema: {
@@ -103,6 +114,7 @@ export async function sptransRoutes(
       }),
       response: { 200: LineStopETAModel },
     },
-    handler: controller.getArrivalPrediction,
-  });
+  },
+    (req: FastifyRequest<{ Params: { stopCode: number; lineCode: number } }>, res: FastifyReply) => controller.getArrivalPredictionsByStop(req, res)
+  );
 }

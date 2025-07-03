@@ -1,8 +1,9 @@
 import { FastifyTypedInstance } from "../../@types/fastify.types";
 import { z } from "zod/v4";
-import {  UserSchema } from "../../domain/entities/user.model";
+import {  User, UserSchema } from "../../domain/entities/user.model";
 import { UserController } from "../controllers/user.controller";
 import { ZOD_ERRORS_MESSAGES } from "../../utils/error-messages";
+import { FastifyReply, FastifyRequest } from "fastify";
 
 export async function userRoutes(
   app: FastifyTypedInstance,
@@ -19,8 +20,8 @@ export async function userRoutes(
         },
       },
     },
-    userController.findAll
-  )
+    (req: FastifyRequest, res: FastifyReply) => userController.findAll(req, res)
+  );
 
   app.get(
     "/users/:id",
@@ -29,14 +30,14 @@ export async function userRoutes(
         tags: ["users"],
         description: "Get a user by ID",
         params: z.object({
-          id: z.string().nonempty({error: ZOD_ERRORS_MESSAGES["string.nonempty"]}),
+          id: z.string().nonempty({ error: ZOD_ERRORS_MESSAGES["string.nonempty"] }),
         }),
         response: {
           200: UserSchema,
         },
       },
     },
-    userController.findById
+    (req: FastifyRequest<{ Params: { id: string } }>, res : FastifyReply) => userController.findById(req, res)
   );
 
   app.delete(
@@ -50,7 +51,7 @@ export async function userRoutes(
         }),
       },
     },
-    userController.delete
+   (req : FastifyRequest<{ Params: { id: string } }>, res : FastifyReply) => userController.delete(req, res)
   );
 
   app.put(
@@ -68,7 +69,7 @@ export async function userRoutes(
         },
       },
     },
-    userController.update
+   (req : FastifyRequest<{ Params: { id: string }; Body: Partial<User> }>, res : FastifyReply) => userController.update(req, res)
   );
 
   app.post(
@@ -83,6 +84,6 @@ export async function userRoutes(
         },
       },
     },
-    userController.create
+   (req : FastifyRequest<{ Body: User }>, res : FastifyReply<{ Body: User }>) => userController.create(req, res)
   );
 }
