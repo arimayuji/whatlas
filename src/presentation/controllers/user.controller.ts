@@ -1,4 +1,4 @@
-import { FastifyReply, FastifyRequest } from "fastify";
+import { FastifyReply, FastifyRequest, FastifyRequestContext } from "fastify";
 import { User } from "../../domain/entities/user.model";
 import { CreateUserUseCase } from "../../application/usecases/CreateUserUseCase";
 import { GetUserByIdUseCase } from "../../application/usecases/GetUserByIdUseCase";

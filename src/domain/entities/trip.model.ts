@@ -29,7 +29,7 @@ export const TripStepModel = z.object({
 
 export type TripStep = z.infer<typeof TripStepModel>
 
-export const TripModel = z.object({
+export const TripModelSchema = z.object({
   id: z.string(),
   steps: z.array(TripStepModel),
   status: TRIP_STATUS,
@@ -54,4 +54,4 @@ export const TripModel = z.object({
   }
 })
 
-export type Trip = z.infer<typeof TripModel>
+export type Trip = z.infer<typeof TripModelSchema>
