@@ -8,22 +8,22 @@ import { SpTransStop } from "../../domain/entities/sptrans-stop.model";
 import { LineVehiclesPositions } from "../../domain/entities/sptrans-vehicle.model";
 
 export interface SpTransGateway {
-  getCompanies(): Promise<SptransCompanyResponse>;
-  getCorredores(): Promise<SpTransCorredor[]>;
-  searchLines(term: string): Promise<SpTransLines>;
+  getCompanies(): Promise<SptransCompanyResponse | null>;
+  getCorredores(): Promise<SpTransCorredor[] | null>;
+  searchLines(term: string): Promise<SpTransLines | null>;
   searchLineWithDirection(
     term: string,
     direction: 1 | 2
-  ): Promise<SpTransLines>;
-  getStopsByTerm(term: string): Promise<SpTransStop[]>;
-  getStopsByLine(lineCode: number): Promise<SpTransStop[]>;
-  getStopsByCorredor(corredorCode: number): Promise<SpTransStop[]>;
-  getVehiclePositions(): Promise<LinePosition>;
-  getVehiclePositionsByLine(lineCode: number): Promise<LineVehiclesPositions>;
+  ): Promise<SpTransLines | null>;
+  getStopsByTerm(term: string): Promise<SpTransStop[] | null>;
+  getStopsByLine(lineCode: number): Promise<SpTransStop[] | null>;
+  getStopsByCorredor(corredorCode: number): Promise<SpTransStop[] | null>;
+  getVehiclePositions(): Promise<LinePosition | null>;
+  getVehiclePositionsByLine(lineCode: number): Promise<LineVehiclesPositions | null>;
   getArrivalPrediction(
     stopCode: number,
     lineCode: number
-  ): Promise<LineStopETA>;
-  getArrivalPredictionByLine(lineCode: number): Promise<VehicleLineETA>;
-  getArrivalPredictionByStop(stopCode: number): Promise<LineStopETA>;
+  ): Promise<LineStopETA | null>;
+  getArrivalPredictionByLine(lineCode: number): Promise<VehicleLineETA | null>;
+  getArrivalPredictionByStop(stopCode: number): Promise<LineStopETA | null>;
 }

@@ -25,9 +25,9 @@ export interface GoogleApiGateway {
       requestedReferenceRoutes,
     }
       : GetTransitRouteType
-  ): Promise<GetTransitRouteResponseType>;
-  geocodeAddress(address: string): Promise< GetGeocodingResponseType>;
-  getWeatherByLatLng({ latitude,longitude }: LatLang): Promise<GetWeatherResponseType>;
+  ): Promise<GetTransitRouteResponseType | null>;
+  geocodeAddress(address: string): Promise< GetGeocodingResponseType | null>;
+  getWeatherByLatLng({ latitude,longitude }: LatLang): Promise<GetWeatherResponseType | null>;
   getForecastByLatLng({ latitude,longitude }: LatLang): Promise<any>;
-  searchPlace(query: string, location?: LatLang): Promise<GetSearchPlaceResponseType>;
+  searchPlace(query: string, location?: LatLang): Promise<GetSearchPlaceResponseType | null>;
 }
