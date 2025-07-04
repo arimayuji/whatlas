@@ -16,7 +16,7 @@ export async function userRoutes(
         tags: ["users"],
         description: "List all users",
         response: {
-          200: z.array(UserSchema),
+          200: z.array(UserSchema).default([]),
         },
       },
     },

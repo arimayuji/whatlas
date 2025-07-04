@@ -16,10 +16,6 @@ export async function handleError(app: FastifyInstance) {
     }
 
     if (error.validation) {
-      request.log.warn({
-        validation: error.validation
-      }, "Validation error");
-
       return responseError(reply, error.validation);
     }
 
