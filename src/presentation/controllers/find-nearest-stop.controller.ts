@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { FindNearestStopUseCase } from '../../application/usecases/FindNearestStopUseCase';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { FindNearestQuery } from '../@types/find-nearest.type';
+import { responseSuccess } from '../../utils/responseSuccess';
 
 const findNearestSchema = z.object({
   tableName: z.string(),
@@ -22,7 +23,7 @@ export class FindNearestStopController {
         longitude: longitude,
       });
 
-      return res.status(200).send(result);
+      return responseSuccess(res, {data: result, message: "Founded nearest stop", code: 200});
     } catch (err: any) {
       console.error(err);
       return res.status(400).send(err.message);

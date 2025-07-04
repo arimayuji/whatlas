@@ -4,6 +4,7 @@ import {  User, UserSchema } from "../../domain/entities/user.model";
 import { UserController } from "../controllers/user.controller";
 import { ZOD_ERRORS_MESSAGES } from "../../utils/error-messages";
 import { FastifyReply, FastifyRequest } from "fastify";
+import { ResponseSuccessSchema } from "../../utils/responseSuccess";
 
 export async function userRoutes(
   app: FastifyTypedInstance,
@@ -16,7 +17,7 @@ export async function userRoutes(
         tags: ["users"],
         description: "List all users",
         response: {
-          200: z.array(UserSchema).default([]),
+          200:  ResponseSuccessSchema,
         },
       },
     },
@@ -33,7 +34,7 @@ export async function userRoutes(
           id: z.string().nonempty({ error: ZOD_ERRORS_MESSAGES["string.nonempty"] }),
         }),
         response: {
-          200: UserSchema,
+          200:  ResponseSuccessSchema,
         },
       },
     },
@@ -65,7 +66,7 @@ export async function userRoutes(
         }),
         body: UserSchema,
         response: {
-          200: UserSchema,
+          200:  ResponseSuccessSchema,
         },
       },
     },
@@ -80,7 +81,7 @@ export async function userRoutes(
         description: "Create a new user",
         body: UserSchema,
         response: {
-          201: UserSchema,
+          201: ResponseSuccessSchema,
         },
       },
     },

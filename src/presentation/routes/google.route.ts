@@ -10,7 +10,8 @@ import {
   weatherQuerySchema,
 } from "../@types/google-routes.type";
 
-import { getTransitRouteResponseSchema, getTransitRouteSchema, GetTransitRouteType } from "../../application/@types/google-gateway.type";
+import {getTransitRouteSchema, GetTransitRouteType } from "../../application/@types/google-gateway.type";
+import { ResponseSuccessSchema } from "../../utils/responseSuccess";
 
 export async function googleApiRoutes(
   app: FastifyTypedInstance,
@@ -23,7 +24,7 @@ export async function googleApiRoutes(
         tags: ["google"],
         body: getTransitRouteSchema,
         response: {
-          200: getTransitRouteResponseSchema,
+          200: ResponseSuccessSchema,
         },
       },
     },
@@ -39,6 +40,9 @@ export async function googleApiRoutes(
       schema: {
         tags: ["google"],
         querystring: geocodeQuerySchema,
+        response: {
+          200: ResponseSuccessSchema,
+        },
       },
     },
     (req: FastifyRequest<{ Querystring: GeocodeQuery }>, res: FastifyReply) =>
@@ -51,6 +55,9 @@ export async function googleApiRoutes(
       schema: {
         tags: ["google"],
         querystring: weatherQuerySchema,
+        response: {
+          200: ResponseSuccessSchema,
+        },
       },
     },
     (req: FastifyRequest<{ Querystring: WeatherQuery }>, res: FastifyReply) =>
@@ -63,6 +70,9 @@ export async function googleApiRoutes(
       schema: {
         tags: ["google"],
         querystring: placeSearchQuerySchema,
+        response: {
+          200: ResponseSuccessSchema,
+        },
       },
     },
     (

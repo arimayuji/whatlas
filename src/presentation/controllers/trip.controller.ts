@@ -17,7 +17,7 @@ export class TripController {
 
     const result = await this.addUserTripUseCase.execute({ userId, trip });
 
-    return responseSuccess(res, result, "Trip added with success", 200);
+    return responseSuccess(res, {data: result,message: "Trip added with success",code: 200});
   }
 
   async deleteTrip(req: FastifyRequest<{Params : {userId: string, tripId: string}}>, res : FastifyReply) {
@@ -25,7 +25,7 @@ export class TripController {
 
     const result = await this.deleteUserTripUseCase.execute({ userId, tripId });
 
-    return responseSuccess(res, result, "Trip deleted with success", 200);
+    return responseSuccess(res, {data: result, message:"Trip deleted with success",code: 200});
   }
 
   async getUserHistoryTrips(req: FastifyRequest<{Params : {userId: string}}>, res : FastifyReply) {
@@ -33,6 +33,6 @@ export class TripController {
 
     const result = await this.getUserHistoryTripsUseCase.execute({ userId });
     
-    return responseSuccess(res, result, "Trips found with success", 200);
+    return responseSuccess(res, {data: result,message: "Trips found with success",code: 200});
   }
 }

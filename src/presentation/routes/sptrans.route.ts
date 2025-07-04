@@ -1,14 +1,8 @@
 import { FastifyTypedInstance } from "../../@types/fastify.types";
 import { z } from "zod/v4";
-import { SptransCompanyResponseModel } from "../../domain/entities/sptrans-company.model";
-import { SpTransCorredorResponseModel } from "../../domain/entities/sptrans-corredor.model";
-import { LineStopETAModel } from "../../domain/entities/sptrans-eta-stopline.model";
-import { SpTransLinesModel } from "../../domain/entities/sptrans-line.model";
-import { LinePositionResponseModel } from "../../domain/entities/sptrans-position.model";
-import { SpTransStopResponseModel } from "../../domain/entities/sptrans-stop.model";
-import { LineVehiclesPositionsModel } from "../../domain/entities/sptrans-vehicle.model";
 import { SpTransController } from "../controllers/sptrans.controller";
 import { FastifyReply, FastifyRequest } from "fastify";
+import { ResponseSuccessSchema } from "../../utils/responseSuccess";
 
 export async function sptransRoutes(
   app: FastifyTypedInstance,
@@ -18,7 +12,7 @@ export async function sptransRoutes(
     schema: {
       tags: ["sptrans"],
       description: "List all SPTrans companies",
-      response: { 200: SptransCompanyResponseModel },
+      response: { 200: ResponseSuccessSchema},
     },
   },
     (req: FastifyRequest, res: FastifyReply) => controller.getCompanies(req, res)
@@ -28,7 +22,7 @@ export async function sptransRoutes(
     schema: {
       tags: ["sptrans"],
       description: "List all SPTrans corridors",
-      response: { 200: SpTransCorredorResponseModel },
+      response: { 200: ResponseSuccessSchema},
     },
   },
     (req: FastifyRequest, res: FastifyReply) => controller.getCorredores(req, res)
@@ -39,7 +33,7 @@ export async function sptransRoutes(
       tags: ["sptrans"],
       description: "Search lines by term",
       querystring: z.object({ termosBusca: z.string() }),
-      response: { 200: SpTransLinesModel },
+      response: { 200: ResponseSuccessSchema},
     },
   },
     (req:FastifyRequest<{ Querystring: { termosBusca: string } }>, res: FastifyReply) => controller.searchLines(req, res)
@@ -53,7 +47,7 @@ export async function sptransRoutes(
         termosBusca: z.string(),
         sentido: z.enum(["1", "2"]).transform(Number),
       }),
-      response: { 200: SpTransLinesModel },
+      response : {200: ResponseSuccessSchema},
     },
   },
     (req: FastifyRequest<{
@@ -66,7 +60,7 @@ export async function sptransRoutes(
       tags: ["sptrans"],
       description: "Search stops by term",
       querystring: z.object({ termosBusca: z.string() }),
-      response: { 200: SpTransStopResponseModel },
+      response: { 200:ResponseSuccessSchema},
     },
   },
     (req: FastifyRequest<{ Querystring: { termosBusca: string } }>, res: FastifyReply) => controller.searchLines(req, res)
@@ -77,7 +71,7 @@ export async function sptransRoutes(
       tags: ["sptrans"],
       description: "Get stops by line code",
       params: z.object({ codigoLinha: z.string().transform(Number) }),
-      response: { 200: SpTransStopResponseModel },
+      response: { 200:ResponseSuccessSchema},
     },
   },
     (req: FastifyRequest<{ Params: { codigoLinha: number } }>, res: FastifyReply) => controller.getStopsByLine(req, res)
@@ -87,7 +81,7 @@ export async function sptransRoutes(
     schema: {
       tags: ["sptrans"],
       description: "Get all vehicle positions",
-      response: { 200: LinePositionResponseModel },
+      response: { 200:ResponseSuccessSchema},
     },
   },
     (req: FastifyRequest, res: FastifyReply) => controller.getVehiclePositions(req, res)
@@ -98,7 +92,7 @@ export async function sptransRoutes(
       tags: ["sptrans"],
       description: "Get vehicle positions by line",
       params: z.object({ codigoLinha: z.string().transform(Number) }),
-      response: { 200: LineVehiclesPositionsModel },
+      response: { 200:ResponseSuccessSchema},
     },
   },
     (req: FastifyRequest<{ Params: { codigoLinha: number } }>, res: FastifyReply) => controller.getVehiclePositionsByLine(req, res)
@@ -112,7 +106,7 @@ export async function sptransRoutes(
         stopCode: z.string().transform(Number),
         lineCode: z.string().transform(Number),
       }),
-      response: { 200: LineStopETAModel },
+      response: { 200:ResponseSuccessSchema},
     },
   },
     (req: FastifyRequest<{ Params: { stopCode: number; lineCode: number } }>, res: FastifyReply) => controller.getArrivalPredictionsByStop(req, res)

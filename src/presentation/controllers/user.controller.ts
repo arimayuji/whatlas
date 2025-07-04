@@ -24,13 +24,13 @@ export class UserController {
 
       if (!user) return reply.code(404).send({ message: "User not found" });
 
-      return responseSuccess(reply, user, "Found user", 201);
+      return responseSuccess(reply, {data: user,message: "Found user", code: 201});
   }
 
   async findAll(request: FastifyRequest, reply: FastifyReply) {
     const users = await this.getAllUsersUseCase.execute();
     
-    return responseSuccess(reply,users, "Founded all users", 200);
+    return responseSuccess(reply,{data: users, message: "Founded all users", code: 200});
   }
 
   async create(request: FastifyRequest, reply: FastifyReply) {
@@ -45,7 +45,7 @@ export class UserController {
 
       await this.createUserUseCase.execute(user);
 
-      return responseSuccess(reply, user, "User created successfully", 201);
+      return responseSuccess(reply, {data: user,message: "User created successfully",code: 201});
   }
 
   async update(
@@ -58,7 +58,7 @@ export class UserController {
       
       await this.updateUserUseCase.execute({id, destinations, defaultOrigin, marginInMinutes,});
 
-      return responseSuccess(reply, {id, destinations, defaultOrigin, marginInMinutes,});
+      return responseSuccess(reply, {data: {id, destinations, defaultOrigin, marginInMinutes,},message: "Updated user with success", code: 200});
   }
 
   async delete(
@@ -69,6 +69,6 @@ export class UserController {
 
       await this.deleteUserUseCase.execute({ id });
 
-      return responseSuccess(reply, { id }, "Deleted user with success", 200);
+      return responseSuccess(reply, {data: { id }, message: "Deleted user with success", code: 200});
   }
 }

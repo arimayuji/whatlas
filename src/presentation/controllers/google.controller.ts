@@ -58,7 +58,7 @@ export class GoogleApiController {
       }
     );
 
-    return responseSuccess(reply, data, "Route calculated", 200);
+    return responseSuccess(reply, {data,message: "Route calculated",code: 200});
   }
 
   async geocodeAddress(
@@ -67,7 +67,7 @@ export class GoogleApiController {
   ) {
     const { address } = request.query;
     const data = await this.googleApi.geocodeAddress(address);
-    return responseSuccess(reply, data, "Founded address", 200);
+    return responseSuccess(reply, {data,message: "Founded address",code: 200});
   }
 
   async getWeather(
@@ -76,7 +76,7 @@ export class GoogleApiController {
   ) {
     const { latitude, longitude } = request.query;
     const data = await this.googleApi.getWeatherByLatLng({ latitude, longitude });
-    return responseSuccess(reply, data, "Founded weather", 200);
+    return responseSuccess(reply, {data,message: "Founded weather",code: 200});
   }
 
   async searchPlace(
@@ -90,6 +90,6 @@ export class GoogleApiController {
       query,
       latitude && longitude ? { latitude, longitude } : undefined
     );
-    return responseSuccess(reply, data, "Founded place", 200);
+    return responseSuccess(reply, {data,message: "Founded place",code: 200});
   }
 }

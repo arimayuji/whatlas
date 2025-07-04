@@ -4,6 +4,7 @@ import { RechargeModelSchema } from "../../domain/entities/recharge.model";
 import { ZOD_ERRORS_MESSAGES } from "../../utils/error-messages";
 import { RechargeController } from "../controllers/recharge.controller";
 import { z } from "zod/v4";
+import { ResponseSuccessSchema } from "../../utils/responseSuccess";
 
 export async function rechargeRoute(
   app: FastifyTypedInstance,
@@ -19,7 +20,7 @@ export async function rechargeRoute(
             userId: z.string().nonempty({error: ZOD_ERRORS_MESSAGES["string.nonempty"]}),
           }),
           response: {
-            200: z.array(RechargeModelSchema),
+            200: ResponseSuccessSchema,
           },
         },
       },

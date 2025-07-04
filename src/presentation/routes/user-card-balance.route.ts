@@ -3,6 +3,7 @@ import { FastifyTypedInstance } from "../../@types/fastify.types";
 import { UserCardBalanceController } from "../controllers/user-card-balance.controller";
 import { z } from "zod/v4";
 import { ZOD_ERRORS_MESSAGES } from "../../utils/error-messages";
+import { ResponseSuccessSchema } from "../../utils/responseSuccess";
 
 export async function userCardBalanceRoutes(
   app: FastifyTypedInstance,
@@ -16,7 +17,10 @@ export async function userCardBalanceRoutes(
         description: "Get user card balance",
         params: z.object({
           userId: z.string().nonempty({error: ZOD_ERRORS_MESSAGES["string.nonempty"]}),
-        })
+        }),
+        response: {
+          200: ResponseSuccessSchema,
+        }
       },
     },
    (req : FastifyRequest<{ Params: { userId: string } }>, res : FastifyReply) =>  controller.getUserCardBalance(req, res)
@@ -30,7 +34,10 @@ export async function userCardBalanceRoutes(
         description: "Get remaining tickets",
         params: z.object({
           userId: z.string().nonempty({ error: ZOD_ERRORS_MESSAGES["string.nonempty"] }),
-        })
+        }),
+        response: {
+          200: ResponseSuccessSchema,
+        }
       },
     },
    (req: FastifyRequest<{ Params: { userId: string } }>, res : FastifyReply) => controller.getRemainingTickets(req, res)
@@ -49,6 +56,9 @@ export async function userCardBalanceRoutes(
           currentBalance: z.number(),
           updatedAt: z.string(),
         }),
+        response: {
+          204: ResponseSuccessSchema,
+        }
       },
     },
    (req : FastifyRequest<{ Params: { userId: string }, Body: { currentBalance: number, updatedAt: string } }>,res : FastifyReply) => controller.updateUserCardBalance(req, res)

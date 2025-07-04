@@ -16,19 +16,21 @@ export class UserCardBalanceController {
     const { currentBalance, updatedAt } = req.body;
 
     await this.updateUserCardUseCase.execute({ userId, currentBalance, updatedAt })
+
+    return responseSuccess(res, {data: null, message: "User card balance updated with success", code: 204});
   }
 
   async getUserCardBalance(req: FastifyRequest<{ Params: { userId: string } }>, res: FastifyReply) {
     const { userId } = req.params;
     const result = await this.getUserCardUseCase.execute({ userId })
     
-    return responseSuccess(res, result, "User card balance found with success", 200);
+    return responseSuccess(res, {data: result, message: "User card balance found with success", code: 200});
   }
 
   async getRemainingTickets(req: FastifyRequest<{ Params: { userId: string } }>, res: FastifyReply) {
     const { userId } = req.params;
     const result = await this.getRamainingTicketsUseCase.execute({ userId })
 
-    return responseSuccess(res, result, "Remaining tickets found with success", 200);
+    return responseSuccess(res, {data: result, message: "Remaining tickets found with success", code: 200});
   }
 }

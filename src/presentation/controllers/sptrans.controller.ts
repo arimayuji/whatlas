@@ -31,7 +31,7 @@ export class SpTransController {
   async getCompanies(req: FastifyRequest, reply: FastifyReply) {
     const data = await this.getCompaniesUseCase.execute();
 
-    return responseSuccess(reply, data, "Founded companies", 200);
+    return responseSuccess(reply, {data, message: "Founded companies", code: 200});
   }
 
   async getCorredores(req: FastifyRequest, reply: FastifyReply) {
@@ -40,7 +40,7 @@ export class SpTransController {
     if (!data || data.length === 0)
       return reply.code(404).send({ message: "No corridors found" });
 
-    return responseSuccess(reply, data, "Founded corridors", 200);
+    return responseSuccess(reply,{ data, message: "Founded corridors", code: 200});
   }
 
   async searchLines(
@@ -54,7 +54,7 @@ export class SpTransController {
     if (!data || data.length === 0)
       return reply.code(404).send({ message: "No lines found" });
     
-    return responseSuccess(reply, data, "Founded lines", 200);
+    return responseSuccess(reply,{ data, message: "Founded lines", code: 200});
   }
 
   async searchLineWithDirection(
@@ -73,7 +73,7 @@ export class SpTransController {
           .code(404)
           .send({ message: "No lines found for given direction" });
     
-    return responseSuccess(reply, data, "Founded lines", 200);
+    return responseSuccess(reply, {data, message: "Founded lines", code: 200});
   }
 
   async getStopsByTerm(
@@ -87,7 +87,7 @@ export class SpTransController {
     if (!data || data.length === 0)
       return reply.code(404).send({ message: "No stops found" });
     
-    return responseSuccess(reply, data, "Founded stops", 200);
+    return responseSuccess(reply,{data, message: "Founded stops", code: 200});
   }
 
   async getStopsByLine(
@@ -103,7 +103,7 @@ export class SpTransController {
           .code(404)
           .send({ message: "No stops found for this line" });
     
-    return responseSuccess(reply, data, "Founded stops by line", 200);
+    return responseSuccess(reply,{data, message:"Founded stops by line", code: 200});
   }
 
   async getStopsByCorredor(
@@ -119,7 +119,7 @@ export class SpTransController {
           .code(404)
           .send({ message: "No stops found for this corridor" });
     
-    return responseSuccess(reply, data, "Founded stops by corridor", 200);
+    return responseSuccess(reply, {data,message: "Founded stops by corridor", code: 200});
   }
 
   async getVehiclePositions(req: FastifyRequest, reply: FastifyReply) {
@@ -128,7 +128,7 @@ export class SpTransController {
     if (!data || !data.l || data.l.length === 0)
         return reply.code(404).send({ message: "No vehicle positions found" });
     
-    return responseSuccess(reply, data, "Founded vehicle positions", 200);
+    return responseSuccess(reply, {data,message: "Founded vehicle positions", code: 200});
   }
 
   async getVehiclePositionsByLine(
@@ -144,7 +144,7 @@ export class SpTransController {
           .code(404)
           .send({ message: "No vehicle positions for this line" });
     
-    return responseSuccess(reply, data, "Founded vehicle positions by line", 200);
+    return responseSuccess(reply, {data,message: "Founded vehicle positions by line", code: 200});
   }
 
   async getArrivalPrediction(
@@ -159,7 +159,7 @@ export class SpTransController {
     if (!data || !data.p || data.p.l.length === 0)
         return reply.code(404).send({ message: "No arrival prediction found" });
     
-    return responseSuccess(reply, data, "Arrival prediction", 200);
+    return responseSuccess(reply, {data,message: "Arrival prediction", code: 200});
   }
 
   async getArrivalPredictionsByStop(
@@ -173,7 +173,7 @@ export class SpTransController {
     if (!data || !data.p || data.p.l.length === 0)
         return reply.code(404).send({ message: "No arrival predictions found" });
     
-    return responseSuccess(reply, data, "Arrival predictions by stop", 200);
+    return responseSuccess(reply, {data,message: "Arrival predictions by stop", code: 200});
   }
 
   async getArrivalPredictionsByLine(
@@ -187,6 +187,6 @@ export class SpTransController {
     if (!data || !data.ps || data.ps.length === 0)
       return reply.code(404).send({ message: "No arrival predictions found" });
     
-    return responseSuccess(reply, data, "Arrival predictions by line", 200);
+    return responseSuccess(reply,{data,message: "Arrival predictions by line", code: 200});
   }
 }

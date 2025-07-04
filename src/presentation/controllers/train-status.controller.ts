@@ -12,7 +12,7 @@ export class TrainStatusController {
   async findAll(_: FastifyRequest, reply: FastifyReply) {
     const data = await this.getAllTrainStatusUseCase.execute();
     
-    return responseSuccess(reply, data, "Founded all lines", 200);
+    return responseSuccess(reply, {data, message: "Founded all lines", code: 200});
   }
 
   async findById(
@@ -27,7 +27,7 @@ export class TrainStatusController {
         return reply.code(404).send({ message: "Linha não encontrada" });
       }
 
-    return responseSuccess(reply, data, "Founded line", 200);
+    return responseSuccess(reply, {data, message: "Founded line", code: 200});
   }
 
   async getByLine(
@@ -38,6 +38,6 @@ export class TrainStatusController {
 
     const data = await this.getTrainStatusByLineUseCase.execute({ line });      
     
-    return responseSuccess(reply, data, "Founded line", 200);
+    return responseSuccess(reply, {data, message: "Founded line", code: 200});
   }
 }
