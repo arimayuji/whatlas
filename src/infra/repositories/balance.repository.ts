@@ -1,33 +1,71 @@
-import { UserCardBalance } from "../../domain/entities/user-card-balance.model";
-import { BalanceRepository } from "../../domain/repositories/BalanceRepository";
 import { firestore } from "../../utils/firebase";
+import { UserCardBalanceModelSchema, UserCardBalance } from "../../domain/entities/user-card-balance.model";
+import { BalanceRepository } from "../../domain/repositories/BalanceRepository";
+import { parseOrThrow } from "../../utils/parse-or-null";
 
-export class BalanceRepositoryFirestore implements BalanceRepository{
+export class BalanceRepositoryFirestore implements BalanceRepository {
   private readonly collection = firestore.collection("users");
-  
-  async getUserCardBalance(userId: string): Promise<number> {
-    const snapshot = this.collection.doc(userId).collection("cardBalance").doc("current");
 
-    const doc = (await snapshot.get()).data() as UserCardBalance;
+  async getUserCardBalance(userId: string): Promise<number> {
+    const docRef = this.collection
+      .doc(userId)
+      .collection("cardBalance")
+      .doc("current");
     
-    return doc.currentBalance
+    const docSnap = await docRef.get();
+
+    if (!docSnap.exists) {
+      throw new Error(`Saldo de cartão não encontrado para usuário ${userId}`);
+    }
+
+    const balance = parseOrThrow(
+      UserCardBalanceModelSchema,
+      docSnap.data(),
+      `Dados inválidos ao obter saldo do cartão para usuário ${userId}`
+    );
+
+    return balance.currentBalance;
   }
-  
-  async updateUserCardBalance(userId: string, { currentBalance, updatedAt }: { currentBalance: number; updatedAt: string; }): Promise<void> {
-    await this.collection.doc(userId).collection("cardBalance").doc("current").update({
-      currentBalance,
-      updatedAt
-    })
-  }
-  
-  async getRemainingTickets(userId: string): Promise<{ busTickets: number; subwayTickets: number; }> {
-    const snapshot = this.collection.doc(userId).collection("cardBalance").doc("current");
+
+  async updateUserCardBalance(
+    userId: string,
+    { currentBalance, updatedAt }: UserCardBalance
+  ): Promise<void> {
+    parseOrThrow(
+      UserCardBalanceModelSchema,
+      { currentBalance, updatedAt },
+      `Dados inválidos ao atualizar saldo do cartão para usuário ${userId}`
+    );
+
+    const docRef = this.collection
+      .doc(userId)
+      .collection("cardBalance")
+      .doc("current");
     
-    const doc = (await snapshot.get()).data() as UserCardBalance;
+    await docRef.update({ currentBalance, updatedAt });
+  }
+
+  async getRemainingTickets(userId: string): Promise<{ busTickets: number; subwayTickets: number }> {
+    const docRef = this.collection
+      .doc(userId)
+      .collection("cardBalance")
+      .doc("current");
+    
+    const docSnap = await docRef.get();
+
+    if (!docSnap.exists) {
+      throw new Error(`Saldo de cartão não encontrado para usuário ${userId}`);
+    }
+
+    const balance = parseOrThrow(
+      UserCardBalanceModelSchema,
+      docSnap.data(),
+      `Dados inválidos ao obter bilhetes restantes para usuário ${userId}`
+    );
 
     return {
-      busTickets: doc.remainingBusTickets,
-      subwayTickets: doc.remainingBusTickets
-    }
+      busTickets: balance.remainingBusTickets,
+      subwayTickets: balance.remainingSubwayTickets,
+    };
   }
 }

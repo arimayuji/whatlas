@@ -1,147 +1,145 @@
-import axios from "axios";
+import axios, { AxiosInstance } from "axios";
 import { GoogleApiGateway } from "../../application/gateways/GoogleApiGateway";
 import { LatLang } from "../../@types/latlang.type";
-import { GetTransitRouteResponseType, GetTransitRouteType, GetWeatherResponseType } from "../../application/@types/google-gateway.type";
+import { GetGeocodingResponseType, GetGeocodingSchema, GetSearchPlaceResponseSchema, GetSearchPlaceResponseType, getTransitRouteResponseSchema, GetTransitRouteResponseType, GetTransitRouteType, GetWeatherResponseType, GetWeatherSchema } from "../../application/@types/google-gateway.type";
 
-const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY!;
+const BASE_URLS = {
+  directions: "https://routes.googleapis.com/directions/v2",
+  geocode: "https://maps.googleapis.com/maps/api/geocode/json",
+  weatherCurrent: "https://weather.googleapis.com/v1/currentConditions:lookup",
+  weatherForecast: "https://weather.googleapis.com/v1/forecast/hours:lookup",
+  places: "https://places.googleapis.com/v1/places:searchText",
+};
 
 export class HttpGoogleApiGateway implements GoogleApiGateway {
-  async getTransitRoute(
-    { 
-      destination,
-      origin,
-      travelMode,
-      departureTime,  
-      arrivalTime,
-      trafficModel,
-      transitPreferences,
-      intermediates,
-      computeAlternateRoutes,
-      routeModifiers,
-      extraComputations,
-      languageCode,
-      regionCode,
-      units,
-      routingPreference,
-      requestedReferenceRoutes,
-      polylineQuality,
-      optimizeWaypointOrder,
-      polylineEncoding,
-    }
-      : GetTransitRouteType
-  ): Promise< GetTransitRouteResponseType > {
-    const response = await axios.post<GetTransitRouteResponseType>(
-      "https://routes.googleapis.com/directions/v2:computeRoutes",
-      {
-        origin,
-        destination,
-        intermediates: intermediates?.map((intermediate) => ({
-          place_id: intermediate.placeId,
-          address: intermediate.address,
-          vehicle_stop_over: intermediate.vehicleStopOver,
-          via: intermediate.via,
-          side_of_road: intermediate.sideOfRoad,
-          location: { lat_lng: intermediate.location.latLng },
-        })),
-        travelMode,
-        routingPreference,
-        polylineQuality,
-        polylineEncoding,
-        departureTime,
-        arrivalTime,
-        computeAlternateRoutes,
-        routeModifiers,
-        languageCode: languageCode || "pt-BR",
-        regionCode: regionCode || "BR",
-        units,
-        optimizeWaypointOrder,
-        requestedReferenceRoutes,
-        extraComputations,
-        trafficModel,
-        transitPreferences,
+  private readonly client: AxiosInstance;
+
+  constructor() {
+    this.client = axios.create({
+      headers: {
+        "Content-Type": "application/json",
+        "X-Goog-Api-Key": process.env.GOOGLE_API_KEY!,
       },
-      {
-        headers: {
-          "Content-Type": "application/json",
-          "X-Goog-Api-Key": process.env.GOOGLE_API_KEY,
-          "X-Goog-FieldMask":
-            "*",
-        },
-      }
+      params: {
+        key: process.env.GOOGLE_API_KEY!,
+        regionCode: "BR",
+        languageCode: "pt-BR",
+      },
+    });
+  }
+
+  async getTransitRoute(
+    params: GetTransitRouteType
+  ): Promise<GetTransitRouteResponseType | null> {
+    const requestBody: Record<string, unknown> = {
+      origin: params.origin,
+      destination: params.destination,
+      travelMode: params.travelMode,
+      routingPreference: params.routingPreference,
+      polylineQuality: params.polylineQuality,
+      polylineEncoding: params.polylineEncoding,
+      departureTime: params.departureTime,
+      arrivalTime: params.arrivalTime,
+      computeAlternateRoutes: params.computeAlternateRoutes,
+      routeModifiers: params.routeModifiers,
+      languageCode: params.languageCode ?? "pt-BR",
+      regionCode: params.regionCode ?? "BR",
+      units: params.units,
+      optimizeWaypointOrder: params.optimizeWaypointOrder,
+      requestedReferenceRoutes: params.requestedReferenceRoutes,
+      extraComputations: params.extraComputations,
+      trafficModel: params.trafficModel,
+      transitPreferences: params.transitPreferences,
+      intermediates: params.intermediates?.map(i => ({
+        place_id: i.placeId,
+        address: i.address,
+        vehicle_stop_over: i.vehicleStopOver,
+        via: i.via,
+        side_of_road: i.sideOfRoad,
+        location: { lat_lng: i.location.latLng },
+      })),
+    };
+
+    const { data } = await this.client.post<unknown>(
+      `${BASE_URLS.directions}:computeRoutes`,
+      requestBody
     );
 
+    const parsed = getTransitRouteResponseSchema.safeParse(data);
+    if (!parsed.success) {
+      return null;
+    }
+
     return {
-      fallbackInfo: response.data.fallbackInfo,
-      geocodingResult: response.data.geocodingResult,
-      routes: response.data.routes,
+      fallbackInfo: parsed.data.fallbackInfo,
+      geocodingResult: parsed.data.geocodingResult,
+      routes: parsed.data.routes,
     };
   }
 
-  async geocodeAddress(address: string): Promise<any> {
-    const response = await axios.get(
-      `https://maps.googleapis.com/maps/api/geocode/json`,
+  async geocodeAddress(address: string): Promise<GetGeocodingResponseType | null> {
+    const { data } = await this.client.get<unknown>(
+      BASE_URLS.geocode,
       {
         params: {
-          address: address.replace(/ /g, "+"),
-          language: "pt-BR",
-          region: "BR",
-          key: GOOGLE_API_KEY,
+          address: address.replace(/\s+/g, "+"),
           components: "country:BR|locality:São+Paulo|",
         },
       }
     );
-    return response.data;
+    const parsed = GetGeocodingSchema.safeParse(data);
+    if (!parsed.success) {
+      return null;
+    }
+    return parsed.data;
   }
 
-  async getWeatherByLatLng({ latitude,longitude }: LatLang): Promise<any> {
-    const response = await axios.get<GetWeatherResponseType>(
-      `https://weather.googleapis.com/v1/currentConditions:lookup`,
+  async getWeatherByLatLng({ latitude, longitude }: LatLang): Promise<GetWeatherResponseType | null> {
+    const { data } = await this.client.get<unknown>(
+      BASE_URLS.weatherCurrent,
       {
         params: {
-          key: GOOGLE_API_KEY,
           "location.latitude": latitude,
           "location.longitude": longitude,
           unitsSystem: "METRIC",
-          languageCode: "pt-BR",
         },
       }
     );
-    return response.data;
+    const parsed = GetWeatherSchema.safeParse(data);
+    if (!parsed.success) {
+      return null;
+    }
+    return parsed.data;
   }
 
-  async getForecastByLatLng({ latitude,longitude }: LatLang): Promise<any> {
-    const response = await axios.get(
-      `https://weather.googleapis.com/v1/forecast/hours:lookup`,
+  async getForecastByLatLng({ latitude, longitude }: LatLang): Promise<any> {
+    const { data } = await this.client.get(
+      BASE_URLS.weatherForecast,
       {
         params: {
-          key: GOOGLE_API_KEY,
           "location.latitude": latitude,
           "location.longitude": longitude,
         },
       }
     );
-
-    return response.data;
+    return data;
   }
 
-  async searchPlace(query: string): Promise<any> {
-    const response = await axios.post(
-      "https://places.googleapis.com/v1/places:searchText",
-      {
-        textQuery: query,
-        languageCode: "pt-BR",
-        regionCode: "BR",
-        pageSize: 5,
-      },
+  async searchPlace(query: string): Promise<GetSearchPlaceResponseType | null> {
+    const { data } = await this.client.post<unknown>(
+      BASE_URLS.places,
+      { textQuery: query, pageSize: 5 },
       {
         headers: {
-          "Content-Type": "application/json",
-          "X-Goog-Api-Key": process.env.GOOGLE_API_KEY,
           "X-Goog-FieldMask":
-            "places.displayName,places.formattedAddress,places.name,places.id,places.types,places.shortFormattedAddress,places.location,places.googleMapsUri,",
+            "places.displayName,places.formattedAddress,places.name,places.id,places.types,places.shortFormattedAddress,places.location,places.googleMapsUri",
         },
       }
     );
-    return response.data;
+    const parsed = GetSearchPlaceResponseSchema.safeParse(data);
+    if (!parsed.success) {
+      return null;
+    }
+    return parsed.data;
   }
 }

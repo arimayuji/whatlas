@@ -28,9 +28,9 @@ export class UserController {
   }
 
   async findAll(request: FastifyRequest, reply: FastifyReply) {
-      const users = await this.getAllUsersUseCase.execute();
-      
-      return responseSuccess(reply,users, "Founded all users", 200);
+    const users = await this.getAllUsersUseCase.execute();
+    
+    return responseSuccess(reply,users, "Founded all users", 200);
   }
 
   async create(request: FastifyRequest, reply: FastifyReply) {

@@ -1,100 +1,128 @@
 import { SpTransGateway } from "../../application/gateways/SpTransGateway";
 import { http } from "../../utils/http";
-
-import { SptransCompanyResponse } from "../../domain/entities/sptrans-company.model";
-import { SpTransCorredor } from "../../domain/entities/sptrans-corredor.model";
-import { SpTransLine } from "../../domain/entities/sptrans-line.model";
-import { SpTransStop } from "../../domain/entities/sptrans-stop.model";
-import { LinePosition } from "../../domain/entities/sptrans-position.model";
-import { LineVehiclesPositions } from "../../domain/entities/sptrans-vehicle.model";
-import { LineStopETA } from "../../domain/entities/sptrans-eta-stop.model";
-import { VehicleLineETA } from "../../domain/entities/sptrans-eta-line.model";
+import {
+  SptransCompanyResponse,
+  SptransCompanyResponseModel,
+} from "../../domain/entities/sptrans-company.model";
+import {
+  SpTransCorredor,
+  SpTransCorredorResponseModel,
+} from "../../domain/entities/sptrans-corredor.model";
+import { SpTransLine, SpTransLinesModel } from "../../domain/entities/sptrans-line.model";
+import { SpTransStop, SpTransStopResponseModel } from "../../domain/entities/sptrans-stop.model";
+import { LinePosition, LinePositionResponseModel } from "../../domain/entities/sptrans-position.model";
+import { LineVehiclesPositions, LineVehiclesPositionsModel } from "../../domain/entities/sptrans-vehicle.model";
+import { LinesStopETAModel, LineStopETA } from "../../domain/entities/sptrans-eta-stop.model";
+import { VehicleLineETA, VehicleLineETAModel } from "../../domain/entities/sptrans-eta-line.model";
+import { parseOrNull } from "../../utils/parse-or-null";
 
 export class SpTransHttpGateway implements SpTransGateway {
-  async getCompanies(): Promise<SptransCompanyResponse> {
-    const res = await http.get<SptransCompanyResponse>("/Empresas");
-    return res.data;
+  private readonly client = http;
+
+  async getCompanies(): Promise<SptransCompanyResponse | null> {
+    const { data } = await this.client.get<unknown>("/Empresas");
+
+    return parseOrNull(SptransCompanyResponseModel, data, console);
   }
 
-  async getCorredores(): Promise<SpTransCorredor[]> {
-    const res = await http.get<SpTransCorredor[]>("/Corredores");
-    return res.data;
+  async getCorredores(): Promise<SpTransCorredor[] | null> {
+    const { data } = await this.client.get<unknown>("/Corredores");
+
+    return parseOrNull(SpTransCorredorResponseModel, data, console);
   }
 
-  async searchLines(term: string): Promise<SpTransLine[]> {
-    const res = await http.get<SpTransLine[]>(
-      `/Linha/Buscar?termosBusca=${term}`
+  async searchLines(term: string): Promise<SpTransLine[] | null> {
+    const { data } = await this.client.get<unknown>(
+      "/Linha/Buscar",
+      { params: { termosBusca: term } }
     );
-    return res.data;
+
+    return parseOrNull(SpTransLinesModel , data, console);
   }
 
   async searchLineWithDirection(
     term: string,
     direction: 1 | 2
-  ): Promise<SpTransLine[]> {
-    const res = await http.get<SpTransLine[]>(
-      `/Linha/BuscarLinhaSentido?termosBusca=${term}&sentido=${direction}`
+  ): Promise<SpTransLine[] | null> {
+    const { data } = await this.client.get<unknown>(
+      "/Linha/BuscarLinhaSentido",
+      { params: { termosBusca: term, sentido: direction } }
     );
-
-    return res.data;
+    return parseOrNull(SpTransLinesModel, data, console);
   }
 
-  async getStopsByTerm(term: string): Promise<SpTransStop[]> {
-    const res = await http.get<SpTransStop[]>(
-      `/Parada/Buscar?termosBusca=${term}`
+  async getStopsByTerm(term: string): Promise<SpTransStop[] | null> {
+    const { data } = await this.client.get<unknown>(
+      "/Parada/Buscar",
+      { params: { termosBusca: term } }
     );
-    return res.data;
+
+    return parseOrNull(SpTransStopResponseModel, data, console);
   }
 
-  async getStopsByLine(lineCode: number): Promise<SpTransStop[]> {
-    const res = await http.get<SpTransStop[]>(
-      `/Parada/BuscarParadasPorLinha?codigoLinha=${lineCode}`
+  async getStopsByLine(lineCode: number): Promise<SpTransStop[] | null> {
+    const { data } = await this.client.get<unknown>(
+      "/Parada/BuscarParadasPorLinha",
+      { params: { codigoLinha: lineCode } }
     );
-    return res.data;
+
+    return parseOrNull(SpTransStopResponseModel, data, console);
   }
 
-  async getStopsByCorredor(corredorCode: number): Promise<SpTransStop[]> {
-    const rest = await http.get<SpTransStop[]>(
-      `/Parada/BuscarParadasPorCorredor?codigoCorredor=${corredorCode}`
+  async getStopsByCorredor(corredorCode: number): Promise<SpTransStop[] | null> {
+    const { data } = await this.client.get<unknown>(
+      "/Parada/BuscarParadasPorCorredor",
+      { params: { codigoCorredor: corredorCode } }
     );
-    return rest.data;
+
+    return parseOrNull(SpTransStopResponseModel, data, console);
   }
 
-  async getVehiclePositions(): Promise<LinePosition> {
-    const res = await http.get<LinePosition>("/Posicao");
-    return res.data;
+  async getVehiclePositions(): Promise<LinePosition | null> {
+    const { data } = await this.client.get<unknown>("/Posicao");
+
+    return parseOrNull( LinePositionResponseModel, data, console);
   }
 
   async getVehiclePositionsByLine(
     lineCode: number
-  ): Promise<LineVehiclesPositions> {
-    const res = await http.get<LineVehiclesPositions>(
-      `/Posicao/Linha?codigoLinha=${lineCode}`
+  ): Promise<LineVehiclesPositions | null> {
+    const { data } = await this.client.get<unknown>(
+      "/Posicao/Linha",
+      { params: { codigoLinha: lineCode } }
     );
-    return res.data;
+
+    return parseOrNull(LineVehiclesPositionsModel, data, console);
   }
 
   async getArrivalPrediction(
     stopCode: number,
     lineCode: number
-  ): Promise<LineStopETA> {
-    const res = await http.get<LineStopETA>(
-      `/Previsao?codigoParada=${stopCode}&codigoLinha=${lineCode}`
+  ): Promise<LineStopETA | null> {
+    const { data } = await this.client.get<unknown>(
+      "/Previsao",
+      { params: { codigoParada: stopCode, codigoLinha: lineCode } }
     );
-    return res.data;
+    return parseOrNull(LinesStopETAModel, data, console);
   }
 
-  async getArrivalPredictionByLine(lineCode: number): Promise<VehicleLineETA> {
-    const res = await http.get<VehicleLineETA>(
-      `/Previsao/Linha?codigoLinha=${lineCode}`
+  async getArrivalPredictionByLine(
+    lineCode: number
+  ): Promise<VehicleLineETA | null> {
+    const { data } = await this.client.get<unknown>(
+      "/Previsao/Linha",
+      { params: { codigoLinha: lineCode } }
     );
-    return res.data;
+    return parseOrNull(VehicleLineETAModel, data, console);
   }
 
-  async getArrivalPredictionByStop(stopCode: number): Promise<LineStopETA> {
-    const res = await http.get<LineStopETA>(
-      `/Previsao/Parada?codigoParada=${stopCode}`
+  async getArrivalPredictionByStop(
+    stopCode: number
+  ): Promise<LineStopETA | null> {
+    const { data } = await this.client.get<unknown>(
+      "/Previsao/Parada",
+      { params: { codigoParada: stopCode } }
     );
-    return res.data;
+    return parseOrNull(LinesStopETAModel, data, console);
   }
 }

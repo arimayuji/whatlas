@@ -1,55 +1,87 @@
-import { Trip } from "../../domain/entities/trip.model";
-import { TripRepository } from "../../domain/repositories/TripRepository";
 import { firestore } from "../../utils/firebase";
+import {  Trip, TripModelSchema } from "../../domain/entities/trip.model";
+import { TripRepository } from "../../domain/repositories/TripRepository";
+import { parseOrThrow } from "../../utils/parse-or-null";
 
-export class TripRepositoryFirestorre implements TripRepository{
+export class TripRepositoryFirestore implements TripRepository {
   private readonly collection = firestore.collection("users");
 
   async addUserTrip(trip: Trip, userId: string): Promise<Trip> {
-    const { id, ...tripWithoutId } = trip;
+    const { id, ...tripData } = trip;
 
-    const snapshot = await this.collection.doc(userId).collection("trips").add(tripWithoutId);
+    const snapshot = await this.collection.doc(userId)
+      .collection("trips")
+      .add(tripData);
+    
+    const createdSnap = await snapshot.get();
 
-    const doc =( await snapshot.get()). data() as Trip;
-
-    return doc
+    return parseOrThrow(
+      TripModelSchema,
+      createdSnap.data(),
+      `Dados inválidos ao adicionar viagem para usuário ${userId}`
+    );
   }
 
   async deleteUserTrip(tripId: string, userId: string): Promise<boolean> {
-    const snapshot = this.collection.doc(userId).collection("trips").doc(tripId);
-  
-    const doc = await snapshot.get();
+    const docRef = this.collection.doc(userId)
+      .collection("trips")
+      .doc(tripId);
     
-    if (!doc.exists) {
+    const docSnap = await docRef.get();
+
+    if (!docSnap.exists) {
       return false;
     }
-  
-    await doc.ref.delete();
+
+    await docRef.delete();
 
     return true;
   }
 
   async getUserHistoryTrips(userId: string): Promise<Trip[]> {
-    const snapshot = this.collection.doc(userId).collection("trips");
-
-    const docs = (await snapshot.get()).docs;
-
-    return docs.map((doc) => doc.data() as Trip);
+    const snapshot = await this.collection.doc(userId)
+      .collection("trips")
+      .get();
+    
+    return snapshot.docs.map(doc =>
+      parseOrThrow(
+        TripModelSchema,
+        doc.data(),
+        `Dados inválidos no histórico de viagens do usuário ${userId}`
+      )
+    );
   }
 
   async getUserLastTrip(userId: string): Promise<Trip | null> {
-    const snapshot =  this.collection.doc(userId).collection("trips").orderBy("createdAt", "desc").limit(2);
-    
-    const doc = (await snapshot.get()).docs.at(0);
-
-    return doc ? doc.data() as Trip : null;
+    const snapshot = await this.collection.doc(userId)
+      .collection("trips")
+      .orderBy("createdAt", "desc")
+      .limit(1)
+      .get();
+    const doc = snapshot.docs[0];
+    if (!doc) return null;
+    return parseOrThrow(
+      TripModelSchema,
+      doc.data(),
+      `Dados inválidos na última viagem do usuário ${userId}`
+    );
   }
 
   async getUserCurrentTrip(userId: string): Promise<Trip | null> {
-    const snapshot = this.collection.doc(userId).collection("trips").orderBy("createdAt", "desc").limit(1);
+    const snapshot = await this.collection.doc(userId)
+      .collection("trips")
+      .orderBy("createdAt", "desc")
+      .limit(1)
+      .get();
+    
+    const doc = snapshot.docs[0];
 
-    const doc = (await snapshot.get()).docs.at(0);
-
-    return doc ? doc.data() as Trip : null
+    if (!doc) return null;
+    
+    return parseOrThrow(
+      TripModelSchema,
+      doc.data(),
+      `Dados inválidos na viagem atual do usuário ${userId}`
+    );
   }
 }

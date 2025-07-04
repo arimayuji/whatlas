@@ -1,45 +1,75 @@
-import { Recharge } from "../../domain/entities/recharge.model";
-import { RechargeRepository } from "../../domain/repositories/RechargeRepository";
 import { firestore } from "../../utils/firebase";
+import { RechargeModelSchema, Recharge } from "../../domain/entities/recharge.model";
+import { RechargeRepository } from "../../domain/repositories/RechargeRepository";
+import { parseOrThrow } from "../../utils/parse-or-null";
 
-export class RechargeRepositoryFirestore implements RechargeRepository{
-  private readonly collection = firestore.collection("users")
+export class RechargeRepositoryFirestore implements RechargeRepository {
+  private readonly collection = firestore.collection("users");
 
   async addRecharge(recharge: Recharge, userId: string): Promise<Recharge> {
-    const { id, ...rechargeWithoutId } = recharge;
+    const { id, ...data } = recharge;
+
+    const snapshot = await this.collection
+      .doc(userId)
+      .collection("recharges")
+      .add(data);
     
-    const snapshot = await this.collection.doc(userId).collection("recharges").add(rechargeWithoutId);
+    const createdSnap = await snapshot.get();
 
-    const doc = (await snapshot.get()).data() as Recharge;
-
-    return doc
+    return parseOrThrow(
+      RechargeModelSchema,
+      createdSnap.data(),
+      `Dados inválidos ao adicionar recarga para usuário ${userId}`
+    );
   }
 
   async deleteRecharge(rechargeId: string, userId: string): Promise<boolean> {
-    const snapshot = this.collection.doc(userId).collection("recharges").doc(rechargeId);
+    const docRef = this.collection
+      .doc(userId)
+      .collection("recharges")
+      .doc(rechargeId);
+    
+    const docSnap = await docRef.get();
 
-    const doc = await snapshot.get();
+    if (!docSnap.exists) {
+      return false;
+    } 
 
-    if(!doc.exists) return false;
+    await docRef.delete();
 
-    await snapshot.delete();
-
-    return true
+    return true;
   }
 
   async getRechargeHistory(userId: string): Promise<Recharge[]> {
-    const snapshot = this.collection.doc(userId).collection("recharges")
-
-    const docs = (await snapshot.get()).docs;
-
-    return docs.map((doc) => doc.data() as Recharge)
+    const snapshot = await this.collection
+      .doc(userId)
+      .collection("recharges")
+      .get();
+    
+    return snapshot.docs.map(doc =>
+      parseOrThrow(
+       RechargeModelSchema,
+        doc.data(),
+        `Dados inválidos no histórico de recargas do usuário ${userId}`
+      )
+    );
   }
 
   async getLastRecharge(userId: string): Promise<Recharge | null> {
-    const snapshot = await this.collection.doc(userId).collection("recharges").orderBy("createdAt", "desc").limit(1).get();
-
-    const doc =(snapshot.docs).at(0) ;
-
-    return doc ? doc.data() as Recharge : null
+    const snapshot = await this.collection
+      .doc(userId)
+      .collection("recharges")
+      .orderBy("createdAt", "desc")
+      .limit(1)
+      .get();
+    const doc = snapshot.docs[0];
+    if (!doc) {
+      return null;
+    }
+    return parseOrThrow(
+     RechargeModelSchema,
+     doc.data(),
+     `Dados inválidos na última recarga do usuário ${userId}`
+    );
   }
 }
