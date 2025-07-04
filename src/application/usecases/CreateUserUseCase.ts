@@ -22,7 +22,7 @@ export class CreateUserUseCase {
     }
     
     return this.userRepository.create({
-      createdAt, firstName, id, lastName, username, destinations: [], defaultOrigin: undefined, marginInMinutes: 10, googleCalendarConnected: false, googleCalendarTokens: undefined, updatedAt: createdAt, recharges: [], trips: [], balance: {
+      createdAt, firstName, id, lastName, username, destinations: [], defaultOrigin: undefined, marginInMinutes: 10, googleCalendarConnected: false, googleCalendarTokens: undefined, updatedAt: createdAt, recharges: [], trips: [], cardBalance: {
         currentBalance: 0,
         remainingBusTickets: 0,
         remainingSubwayTickets: 0,

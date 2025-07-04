@@ -27,7 +27,7 @@ export const UserSchema = z.object({
   googleCalendarTokens: GoogleTokensSchema.optional(),
   recharges: z.array(RechargeModelSchema).default([]),
   trips: z.array(TripModelSchema).default([]),
-  balance:  UserCardBalanceModelSchema,
+  cardBalance:  UserCardBalanceModelSchema,
   createdAt: z.string(),
   updatedAt: z.string().nullable(),
 });
