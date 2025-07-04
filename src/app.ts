@@ -11,35 +11,21 @@ import { fastifySwagger } from "@fastify/swagger";
 import { fastifySwaggerUi } from "@fastify/swagger-ui";
 import { schema } from "./env.schema";
 import { userRoutes } from "./presentation/routes/user.route";
-import { GoogleApiController } from "./presentation/controllers/google.controller";
-import { HttpGoogleApiGateway } from "./infra/gateways/google-api.gateway";
 import { googleApiRoutes } from "./presentation/routes/google.route";
 import { trensStatusRoute } from "./presentation/routes/trens-status.route";
 import { sptransRoutes } from "./presentation/routes/sptrans.route";
 import { findNearestStopRoutes } from "./presentation/routes/find-nearest.route";
-import { FindNearestStopController } from "./presentation/controllers/find-nearest-stop.controller";
-import { FindNearestStopUseCase } from "./application/usecases/FindNearestStopUseCase";
-import { GeoRepository } from "./infra/repositories/geo.repository";
 import dotenv from "dotenv";
-import { createSupabaseClient } from "./infra/clients/supabase.client";
 import { handleError } from "./utils/handle-error";
 import { makeUserController } from "./infra/factories/user-controller.factory";
 import { makeSpTransController } from "./infra/factories/sptrans-controller.factory";
 import { makeTrainStatusController } from "./infra/factories/train-status.factory";
 import {  tripRoutes } from "./presentation/routes/trip.route";
 import { makeTripController } from "./infra/factories/trip.controller";
+import { makeFindNearestStopController } from "./infra/factories/find-nearest-stop.factory";
+import { makeGoogleController } from "./infra/factories/google-controller.factory";
 
 dotenv.config();
-const googleController = new GoogleApiController(new HttpGoogleApiGateway());
-const userController = makeUserController();
-const spTransController = makeSpTransController();
-const tripController = makeTripController();
-
-const trainStatusController = makeTrainStatusController();
-const supabase = createSupabaseClient();
-const findNearestController = new FindNearestStopController(
-  new FindNearestStopUseCase(new GeoRepository(supabase))
-);
 
 const app = fastify({
   logger: {
@@ -54,8 +40,9 @@ const start = async () => {
     await app.register(fastifyEnv, {
       confKey: "config",
       schema,
-      dotenv: true,
+      dotenv: false,
     });
+
     app.log.info("Environment variables loaded");
 
     await app.register(fastifyCors, { origin: "https://your-allowed-domain.com" });
@@ -74,6 +61,14 @@ const start = async () => {
     await app.register(fastifySwaggerUi, { routePrefix: "/docs" });
 
     await handleError(app);
+
+    const googleController = makeGoogleController();
+    const userController = makeUserController();
+    const spTransController = makeSpTransController();
+    const tripController = makeTripController();
+    const findNearestController = makeFindNearestStopController();
+    const trainStatusController = makeTrainStatusController();
+  
 
     await app.register((instance, opts, done) => {
       googleApiRoutes(instance, googleController);

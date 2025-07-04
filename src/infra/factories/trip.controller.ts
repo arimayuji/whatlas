@@ -2,9 +2,12 @@ import { AddUserTripUseCase } from "../../application/usecases/AddUserTripUseCas
 import { DeleteUserTripUseCase } from "../../application/usecases/DeleteUserTripUseCase";
 import { GetUserHistoryTripsUseCase } from "../../application/usecases/GetUserHistoryTripsUseCase";
 import { TripController } from "../../presentation/controllers/trip.controller";
-import { repositories } from "../repositories";
+import { makeRepositories } from "../repositories";
 
 export function makeTripController() {
+
+  const repositories = makeRepositories()
+  
   const addUserTripUseCase = new AddUserTripUseCase(repositories.tripRepository, repositories.userRepository)
   const deleteUserTripUseCase = new DeleteUserTripUseCase(repositories.tripRepository, repositories.userRepository)
   const getUserHistoryTripsUseCase = new GetUserHistoryTripsUseCase(repositories.tripRepository, repositories.userRepository)

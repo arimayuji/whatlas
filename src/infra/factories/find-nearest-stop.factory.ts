@@ -1,8 +1,9 @@
 import { FindNearestStopUseCase } from "../../application/usecases/FindNearestStopUseCase";
 import { FindNearestStopController } from "../../presentation/controllers/find-nearest-stop.controller";
-import { repositories } from "../repositories";
+import { makeRepositories } from "../repositories";
 
-export function findNearestStop() {
+export function makeFindNearestStopController() {
+  const repositories = makeRepositories()
   
   const findNearestStopUseCase = new FindNearestStopUseCase(
     repositories.geoRepository

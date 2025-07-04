@@ -2,9 +2,12 @@ import { FindAllTrainStatusByIdUseCase } from "../../application/usecases/FindAl
 import { GetTrainStatusById } from "../../application/usecases/GetTrainStatusByIdUseCase";
 import { GetTrainStatusByLine } from "../../application/usecases/GetTrainStatusByLineUseCase";
 import { TrainStatusController } from "../../presentation/controllers/train-status.controller";
-import { repositories } from "../repositories";
+import { makeRepositories } from "../repositories";
+
 
 export function makeTrainStatusController() {
+
+  const repositories = makeRepositories()
   
   const getTrainStatusByIdUseCase = new GetTrainStatusById(repositories.trainStatusRepository)
   const getTrainStatusByLineUseCase = new GetTrainStatusByLine(repositories.trainStatusRepository)
