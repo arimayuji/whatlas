@@ -2,9 +2,12 @@ import { DeleteRechargeUseCase } from "../../application/usecases/DeleteRecharge
 import { GetRechargeHistoryUseCase } from "../../application/usecases/GetRechargeHistoryUseCase";
 import { RechargeCardUseCase } from "../../application/usecases/RechargeCardUseCase";
 import { RechargeController } from "../../presentation/controllers/recharge.controller";
-import { repositories } from "../repositories";
+import { makeRepositories } from "../repositories";
 
 export function rechargeController() {
+
+  const repositories = makeRepositories()
+  
   const deleteRechargUseCase = new DeleteRechargeUseCase(repositories.rechargeRepository, repositories.userRepository)
   const rechargeCardUseCase = new RechargeCardUseCase(repositories.balanceRepository)
   const getRechargeHistoryUseCase = new GetRechargeHistoryUseCase(repositories.rechargeRepository, repositories.userRepository)
