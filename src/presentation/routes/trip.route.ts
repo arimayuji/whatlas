@@ -5,7 +5,7 @@ import { ZOD_ERRORS_MESSAGES } from "../../utils/error-messages";
 import { TripController } from "../controllers/trip.controller";
 import { z } from "zod/v4";
 
-export async function tripRoute(
+export async function tripRoutes(
   app: FastifyTypedInstance,
   tripController: TripController
 ) {
