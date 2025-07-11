@@ -1,5 +1,5 @@
 import { FastifyReply, FastifyRequest, FastifyRequestContext } from "fastify";
-import { User } from "../../domain/entities/user.model";
+import { CreateUser, User } from "../../domain/entities/user.model";
 import { CreateUserUseCase } from "../../application/usecases/CreateUserUseCase";
 import { GetUserByIdUseCase } from "../../application/usecases/GetUserByIdUseCase";
 import { GetAllUsersUseCase } from "../../application/usecases/GetAllUsersUseCase";
@@ -33,8 +33,8 @@ export class UserController {
     return responseSuccess(reply,{data: users, message: "Founded all users", code: 200});
   }
 
-  async create(request: FastifyRequest, reply: FastifyReply) {
-      const data = request.body as Omit<User, "id" | "createdAt" | "updatedAt">;
+  async create(request: FastifyRequest<{Body: CreateUser}>, reply: FastifyReply) {
+      const data = request.body;
 
       const user: User = {
         ...data,
@@ -43,9 +43,9 @@ export class UserController {
         updatedAt: null,
       };
 
-      await this.createUserUseCase.execute(user);
+      const result = await this.createUserUseCase.execute(user);
 
-      return responseSuccess(reply, {data: user,message: "User created successfully",code: 201});
+      return responseSuccess(reply, {data: result,message: "User created successfully",code: 201});
   }
 
   async update(
