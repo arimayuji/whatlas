@@ -25,7 +25,6 @@ export class FindNearestStopController {
 
       return responseSuccess(res, {data: result, message: "Founded nearest stop", code: 200});
     } catch (err: any) {
-      console.error(err);
       return res.status(400).send(err.message);
     }
   }

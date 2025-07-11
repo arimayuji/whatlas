@@ -15,47 +15,27 @@ export class GoogleApiController {
     const {
       destination,
       origin,
-      routeModifiers,
       travelMode,
       departureTime,
       arrivalTime,
-      trafficModel,
       transitPreferences,
       intermediates,
-      routingPreference,
       computeAlternateRoutes,
-      extraComputations,
-      languageCode,
-      regionCode,
       optimizeWaypointOrder,
-      requestedReferenceRoutes,
-      units,
-      polylineQuality,
-      polylineEncoding,
     } = request.body;
 
     const data = await this.googleApi.getTransitRoute(
       {
         destination,
         origin,
-        routeModifiers,
         travelMode,
         departureTime,
         arrivalTime,
-        trafficModel,
         transitPreferences,
         intermediates,
-        routingPreference,
         computeAlternateRoutes,
-        extraComputations,
-        languageCode,
-        regionCode,
         optimizeWaypointOrder,
-        requestedReferenceRoutes,
-        units,
-        polylineQuality,
-        polylineEncoding,
-      }
+      },
     );
 
     return responseSuccess(reply, {data,message: "Route calculated",code: 200});
@@ -66,7 +46,9 @@ export class GoogleApiController {
     reply: FastifyReply
   ) {
     const { address } = request.query;
+
     const data = await this.googleApi.geocodeAddress(address);
+
     return responseSuccess(reply, {data,message: "Founded address",code: 200});
   }
 
@@ -75,7 +57,9 @@ export class GoogleApiController {
     reply: FastifyReply
   ) {
     const { latitude, longitude } = request.query;
+
     const data = await this.googleApi.getWeatherByLatLng({ latitude, longitude });
+
     return responseSuccess(reply, {data,message: "Founded weather",code: 200});
   }
 

@@ -4,7 +4,7 @@ import { LatLang } from "../../@types/latlang.type";
 import { GetGeocodingResponseType, GetGeocodingSchema, GetSearchPlaceResponseSchema, GetSearchPlaceResponseType, getTransitRouteResponseSchema, GetTransitRouteResponseType, GetTransitRouteType, GetWeatherResponseType, GetWeatherSchema } from "../../application/@types/google-gateway.type";
 
 const BASE_URLS = {
-  directions: "https://routes.googleapis.com/directions/v2",
+  directions: "https://routes.googleapis.com/directions/v2:computeRoutes",
   geocode: "https://maps.googleapis.com/maps/api/geocode/json",
   weatherCurrent: "https://weather.googleapis.com/v1/currentConditions:lookup",
   weatherForecast: "https://weather.googleapis.com/v1/forecast/hours:lookup",
@@ -35,20 +35,13 @@ export class HttpGoogleApiGateway implements GoogleApiGateway {
       origin: params.origin,
       destination: params.destination,
       travelMode: params.travelMode,
-      routingPreference: params.routingPreference,
-      polylineQuality: params.polylineQuality,
-      polylineEncoding: params.polylineEncoding,
       departureTime: params.departureTime,
       arrivalTime: params.arrivalTime,
-      computeAlternateRoutes: params.computeAlternateRoutes,
-      routeModifiers: params.routeModifiers,
-      languageCode: params.languageCode ?? "pt-BR",
-      regionCode: params.regionCode ?? "BR",
-      units: params.units,
+      computeAlternativeRoutes: params.computeAlternateRoutes,
+      languageCode: "pt-BR",
+      regionCode: "BR",
+      units: "METRIC",
       optimizeWaypointOrder: params.optimizeWaypointOrder,
-      requestedReferenceRoutes: params.requestedReferenceRoutes,
-      extraComputations: params.extraComputations,
-      trafficModel: params.trafficModel,
       transitPreferences: params.transitPreferences,
       intermediates: params.intermediates?.map(i => ({
         place_id: i.placeId,
@@ -60,25 +53,44 @@ export class HttpGoogleApiGateway implements GoogleApiGateway {
       })),
     };
 
-    const { data } = await this.client.post<unknown>(
-      `${BASE_URLS.directions}:computeRoutes`,
-      requestBody
-    );
-
-    const parsed = getTransitRouteResponseSchema.safeParse(data);
-    if (!parsed.success) {
+    const instance = axios.create({
+      params: {
+        key: process.env.GOOGLE_API_KEY!,
+      },
+    })
+    
+    try {
+      const { data } = await instance.post<GetTransitRouteResponseType>(
+        `${BASE_URLS.directions}`,
+        requestBody,
+        {
+          headers: {
+            "X-Goog-FieldMask":"routes",
+          }
+        }
+      );
+      
+      console.log("data", data)
+      const parsed = getTransitRouteResponseSchema.safeParse(data);
+  
+      if (!parsed.success) {
+        console.log(parsed.error)
+        return null;
+      }
+  
+      return {
+        fallbackInfo: parsed.data.fallbackInfo,
+        geocodingResult: parsed.data.geocodingResult,
+        routes: parsed.data.routes,
+      };
+    }
+    catch (error) {
       return null;
     }
-
-    return {
-      fallbackInfo: parsed.data.fallbackInfo,
-      geocodingResult: parsed.data.geocodingResult,
-      routes: parsed.data.routes,
-    };
   }
 
   async geocodeAddress(address: string): Promise<GetGeocodingResponseType | null> {
-    const { data } = await this.client.get<unknown>(
+    const { data } = await this.client.get<GetGeocodingResponseType>(
       BASE_URLS.geocode,
       {
         params: {
@@ -87,28 +99,43 @@ export class HttpGoogleApiGateway implements GoogleApiGateway {
         },
       }
     );
+
     const parsed = GetGeocodingSchema.safeParse(data);
+
     if (!parsed.success) {
       return null;
     }
+
     return parsed.data;
   }
 
   async getWeatherByLatLng({ latitude, longitude }: LatLang): Promise<GetWeatherResponseType | null> {
-    const { data } = await this.client.get<unknown>(
+    const instance = axios.create({
+      params: {
+        key: process.env.GOOGLE_API_KEY!,
+        languageCode: "pt-BR",
+        unitsSystem: "METRIC",
+      },
+    })
+
+
+    const { data } = await instance.get<GetWeatherResponseType>(
       BASE_URLS.weatherCurrent,
       {
         params: {
           "location.latitude": latitude,
           "location.longitude": longitude,
-          unitsSystem: "METRIC",
         },
       }
     );
+
     const parsed = GetWeatherSchema.safeParse(data);
+
     if (!parsed.success) {
+      console.log(parsed.error)
       return null;
     }
+
     return parsed.data;
   }
 

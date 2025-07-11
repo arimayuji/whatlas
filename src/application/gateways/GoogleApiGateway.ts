@@ -9,20 +9,10 @@ export interface GoogleApiGateway {
       travelMode,
       departureTime,  
       arrivalTime,
-      trafficModel,
       transitPreferences,
       intermediates,
       computeAlternateRoutes,
-      routingPreference,
-      polylineQuality,
-      polylineEncoding,
-      routeModifiers,
-      extraComputations,
-      languageCode,
-      regionCode,
-      units,
       optimizeWaypointOrder,
-      requestedReferenceRoutes,
     }
       : GetTransitRouteType
   ): Promise<GetTransitRouteResponseType | null>;
