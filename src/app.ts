@@ -24,6 +24,8 @@ import {  tripRoutes } from "./presentation/routes/trip.route";
 import { makeTripController } from "./infra/factories/trip.controller";
 import { makeFindNearestStopController } from "./infra/factories/find-nearest-stop.factory";
 import { makeGoogleController } from "./infra/factories/google-controller.factory";
+import { makeBusController } from "./infra/factories/bus-controller.factory";
+import { busRoutes } from "./presentation/routes/bus.route";
 
 dotenv.config();
 
@@ -66,6 +68,7 @@ const start = async () => {
     const userController = makeUserController();
     const spTransController = makeSpTransController();
     const tripController = makeTripController();
+    const busController = makeBusController();
     const findNearestController = makeFindNearestStopController();
     const trainStatusController = makeTrainStatusController();
   
@@ -82,6 +85,11 @@ const start = async () => {
 
     await app.register((instance, opts, done) => {
       userRoutes(instance, userController);
+      done();
+    });
+
+    await app.register((instance, opts, done) => {
+      busRoutes(instance, busController);
       done();
     });
 
