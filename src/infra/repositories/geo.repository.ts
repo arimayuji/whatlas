@@ -15,8 +15,15 @@ export class GeoRepository implements GeoRepository {
     if (!data) return null;
 
     const schema = schemasMap[tableName];
+
+    const parsed = schema.safeParse(data);
+
+    if (!parsed.success) {
+      throw new Error(parsed.error.message);
+    }
+
     if (!schema) throw new Error(`Schema não encontrado para ${tableName}`);
 
-    return schema.parse(data);
+    return parsed.data;
   }
 }
