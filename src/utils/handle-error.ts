@@ -12,7 +12,7 @@ export async function handleError(app: FastifyInstance) {
         statusCode: error.statusCode
       }, "Error");
 
-      return responseError(reply, error.message, error.name, error.statusCode);
+      return responseError(reply,{code: error.statusCode, message: error.message,data: {}} );
     }
 
     if (error.validation) {
