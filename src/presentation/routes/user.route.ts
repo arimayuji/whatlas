@@ -1,6 +1,6 @@
 import { FastifyTypedInstance } from "../../@types/fastify.types";
 import { z } from "zod/v4";
-import {  User, UserSchema } from "../../domain/entities/user.model";
+import {  CreateUserSchema, User, UserSchema } from "../../domain/entities/user.model";
 import { UserController } from "../controllers/user.controller";
 import { ZOD_ERRORS_MESSAGES } from "../../utils/error-messages";
 import { FastifyReply, FastifyRequest } from "fastify";
@@ -79,7 +79,7 @@ export async function userRoutes(
       schema: {
         tags: ["users"],
         description: "Create a new user",
-        body: UserSchema,
+        body: CreateUserSchema,
         response: {
           201: ResponseSuccessSchema,
         },
