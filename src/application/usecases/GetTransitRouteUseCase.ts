@@ -10,20 +10,10 @@ export class GetTransitRouteUseCase{
     travelMode,
     departureTime,  
     arrivalTime,
-    trafficModel,
     transitPreferences,
-    routeModifiers,
-    extraComputations,
     computeAlternateRoutes,
     intermediates,
-    polylineQuality,
-    polylineEncoding,
-    routingPreference,
-    languageCode,
-    regionCode,
-    units,
     optimizeWaypointOrder,
-    requestedReferenceRoutes
   }: GetTransitRouteType) {
     return this.googleApiGateway.getTransitRoute({
       destination,
@@ -31,20 +21,10 @@ export class GetTransitRouteUseCase{
       travelMode,
       departureTime,  
       arrivalTime,
-      trafficModel,
       transitPreferences,
       intermediates,
       computeAlternateRoutes,
-      routingPreference,
-      polylineQuality,
-      polylineEncoding,
-      routeModifiers,
-      extraComputations,
-      languageCode,
-      regionCode,
       optimizeWaypointOrder,
-      requestedReferenceRoutes,
-      units
     });
   }
 }

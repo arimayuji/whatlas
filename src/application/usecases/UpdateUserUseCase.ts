@@ -9,7 +9,7 @@ import { UserRepository } from "../../domain/repositories/UserRepository";
 interface UpdateUserDTO {
   marginInMinutes?: number;
   id: string;
-  defaultOrigin?: Location;
+  defaultOrigin?: Location | null;
   destinations?: Location[];
 }
 
