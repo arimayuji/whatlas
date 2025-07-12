@@ -9,7 +9,6 @@ export class BusController {
 
   async handleGetBusLineStopsUseCase(req: FastifyRequest<{ Querystring:BusLineStopsQuery }>, res: FastifyReply) {
     const { busline} = busLineStopsSchema.parse(req.query);
-
     const result = await this.getBusLineStopsUseCase.execute({
         busline
       });

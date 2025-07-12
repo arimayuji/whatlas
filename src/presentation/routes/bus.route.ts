@@ -6,7 +6,7 @@ import { BusLineStopsQuery, busLineStopsSchema, TerminalBusLinesQuery, terminalB
 
 export async function busRoutes(app: FastifyTypedInstance, controller: BusController) {
   app.get(
-    "/bus-line-stops/:busline",
+    "/bus-line-stops",
     {
       schema: {
         tags: ["bus"],
@@ -20,7 +20,7 @@ export async function busRoutes(app: FastifyTypedInstance, controller: BusContro
   );
 
   app.get(
-    "/terminal-bus-lines/:terminal",
+    "/terminal-bus-lines",
     {
       schema: {
         tags: ["bus"],

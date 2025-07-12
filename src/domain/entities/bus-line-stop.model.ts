@@ -1,13 +1,13 @@
 import { z } from "zod/v4";
 
 export const BusStopModel = z.object({
-  stopId: z.string(),
-  stopName: z.string(),
-  stopLat: z.number(),
-  stopLon: z.number(),
-  stopSequence: z.number(),
-  estacaoInicio: z.string(),
-  estacaoFim: z.string(),
+  stop_id: z.string(),
+  stop_name: z.string(),
+  stop_lat: z.number(),
+  stop_lon: z.number(),
+  stop_sequence: z.number(),
+  estacao_inicio: z.string(),
+  estacao_fim: z.string(),
 })
 export type BusStop = z.infer<typeof BusStopModel>
 
@@ -16,10 +16,10 @@ export type BusStops = z.infer<typeof BusStopsModel>
 
 
 export const BusLineModel = z.object({
-  routeShortName: z.string(),
-  routeLongName: z.string(),
-  estacaoInicio: z.string(),
-  estacaoFim: z.string(),
+  route_short_name: z.string(),
+  route_long_name: z.string(),
+  estacao_inicio: z.string(),
+  estacao_fim: z.string(),
 })
 export type BusLine = z.infer<typeof BusLineModel>
 
