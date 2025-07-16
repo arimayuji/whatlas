@@ -1,7 +1,6 @@
-import { TrainStatus } from "../../domain/entities/current-train-status.model";
+import { Disclaimer, TrainStatus } from "../entities/train-status.model";
 
 export interface TrainStatusRepository {
   getAll(): Promise<TrainStatus[]>;
-  getById(id: string): Promise<TrainStatus | null>;
-  getStatusByLine(line: string): Promise<TrainStatus | null>;
+  getByName(name: string): Promise<TrainStatus | null>;
 }
