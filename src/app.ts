@@ -12,7 +12,6 @@ import { fastifySwaggerUi } from "@fastify/swagger-ui";
 import { schema } from "./env.schema";
 import { userRoutes } from "./presentation/routes/user.route";
 import { googleApiRoutes } from "./presentation/routes/google.route";
-import { trensStatusRoute } from "./presentation/routes/trens-status.route";
 import { sptransRoutes } from "./presentation/routes/sptrans.route";
 import { findNearestStopRoutes } from "./presentation/routes/find-nearest.route";
 import dotenv from "dotenv";
@@ -26,6 +25,7 @@ import { makeFindNearestStopController } from "./infra/factories/find-nearest-st
 import { makeGoogleController } from "./infra/factories/google-controller.factory";
 import { makeBusController } from "./infra/factories/bus-controller.factory";
 import { busRoutes } from "./presentation/routes/bus.route";
+import { trainsStatusRoute } from "./presentation/routes/train-status.route";
 
 dotenv.config();
 
@@ -94,7 +94,7 @@ const start = async () => {
     });
 
     await app.register((instance, opts, done) => {
-      trensStatusRoute(instance, trainStatusController);
+      trainsStatusRoute(instance, trainStatusController);
       done();
     });
 

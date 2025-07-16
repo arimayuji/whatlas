@@ -4,7 +4,7 @@ import { TrainStatusController } from "../controllers/train-status.controller";
 import { FastifyRequest } from "fastify";
 import { ResponseSuccessSchema } from "../../utils/responseSuccess";
 
-export async function trensStatusRoute(
+export async function trainsStatusRoute(
   app: FastifyTypedInstance,
   controller: TrainStatusController
 ) {
@@ -13,7 +13,7 @@ export async function trensStatusRoute(
     {
       schema: {
         tags: ["trens"],
-        description: "Listar status atual de todas as linhas de trem",
+        description: "Listar status atual de todas as linhas de metro/trem",
         response: {
           200: ResponseSuccessSchema
         }
@@ -23,19 +23,19 @@ export async function trensStatusRoute(
   );
 
   app.get(
-    "/trens/status/:id",
+    "/trens/status",
     {
       schema: {
         tags: ["trens"],
-        description: "Buscar status de uma linha de trem por ID",
-        params: z.object({
-          id: z.string(),
+        description: "Buscar status de uma linha de metro/trem pelo nome",
+        querystring: z.object({
+          name: z.string(),
         }),
         response: {
           200: ResponseSuccessSchema
         }
       },
     },
-    (req:  FastifyRequest<{ Params: { id: string } }>, res) => controller.findById(req, res)
+    (req:  FastifyRequest<{ Querystring: { name: string }}>, res) => controller.findByName(req, res)
   );
 }
