@@ -1,12 +1,11 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 import { responseSuccess } from "../../utils/responseSuccess";
-import { GetTrainStatusById } from "../../application/usecases/GetTrainStatusByIdUseCase";
-import { GetTrainStatusByLine } from "../../application/usecases/GetTrainStatusByLineUseCase";
-import { FindAllTrainStatusByIdUseCase } from "../../application/usecases/FindAllTrainStatusUseCase";
+import { GetTrainStatusUseCase } from "../../application/usecases/GetTrainStatusUseCase";
+import { GetAllTrainStatusUseCase } from "../../application/usecases/GetAllTrainStatusUseCase";
 
 export class TrainStatusController {
-  constructor(private readonly getTrainStatusByIdUseCase: GetTrainStatusById, private readonly getTrainStatusByLineUseCase: GetTrainStatusByLine,
-      private readonly getAllTrainStatusUseCase: FindAllTrainStatusByIdUseCase,
+  constructor(private readonly getTrainStatusUseCase: GetTrainStatusUseCase,
+      private readonly getAllTrainStatusUseCase: GetAllTrainStatusUseCase,
   ) {}
 
   async findAll(_: FastifyRequest, reply: FastifyReply) {
@@ -15,13 +14,13 @@ export class TrainStatusController {
     return responseSuccess(reply, {data, message: "Founded all lines", code: 200});
   }
 
-  async findById(
-    request: FastifyRequest<{ Params: { id: string } }>,
+  async findByName(
+    request: FastifyRequest<{ Querystring: { name: string } }>,
     reply: FastifyReply
   ) {
-    const { id } = request.params;
+    const { name } = request.query;
     
-    const data = await this.getTrainStatusByIdUseCase.execute({ id });
+    const data = await this.getTrainStatusUseCase.execute({ name });
 
     if (!data) {
         return reply.code(404).send({ message: "Linha não encontrada" });
@@ -30,14 +29,4 @@ export class TrainStatusController {
     return responseSuccess(reply, {data, message: "Founded line", code: 200});
   }
 
-  async getByLine(
-    request: FastifyRequest<{ Params: { line: string } }>,
-    reply: FastifyReply
-  ) {
-    const { line } = request.params;
-
-    const data = await this.getTrainStatusByLineUseCase.execute({ line });      
-    
-    return responseSuccess(reply, {data, message: "Founded line", code: 200});
-  }
 }
