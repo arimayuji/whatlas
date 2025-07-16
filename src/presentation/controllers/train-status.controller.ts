@@ -15,10 +15,10 @@ export class TrainStatusController {
   }
 
   async findByName(
-    request: FastifyRequest<{ Querystring: { name: string } }>,
+    request: FastifyRequest<{ Params: { name: string } }>,
     reply: FastifyReply
   ) {
-    const { name } = request.query;
+    const { name } = request.params;
     
     const data = await this.getTrainStatusUseCase.execute({ name });
 
