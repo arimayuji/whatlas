@@ -68,8 +68,6 @@ Whatlas é uma plataforma que automatiza o planejamento de deslocamentos urbanos
 ## 🧑‍💻 Equipe
 
 - **Yuji Arima** — Desenvolvedor Full Stack, Idealizador  
-- **Luigi Ishii** — Back-end, Integrador de APIs  
-- **Prof. Dra. Ana Grasielle Dionísio Corrêa** — Orientadora Acadêmica
 
 ---
 
