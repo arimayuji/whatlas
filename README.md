@@ -1,154 +1,79 @@
-# Whatlas
+# Whatlas 🚏
 
-[![Built with Node.js](https://img.shields.io/badge/built%20with-Node.js-339933.svg)](https://nodejs.org/)  
-[![Serverless](https://img.shields.io/badge/serverless-✔️-blue.svg)](https://www.serverless.com/)  
-[![WhatsApp Business API](https://img.shields.io/badge/WhatsApp–API-green.svg)](https://www.whatsapp.com/business/api)  
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE.md)
+**Assistente Inteligente de Mobilidade Urbana via WhatsApp**
 
-Whatlas é um assistente inteligente de mobilidade urbana 100% via WhatsApp, projetado para calcular o horário ideal de saída considerando trânsito, transporte público, clima e imprevistos em grandes cidades brasileiras.
+Whatlas é uma plataforma que automatiza o planejamento de deslocamentos urbanos nas grandes cidades brasileiras. Por meio de uma interface 100% no WhatsApp, usuários informam seu destino e horário desejado de chegada, e o Whatlas retorna o melhor horário de saída com base em dados de trânsito, transporte público, clima e eventos imprevistos.
 
 ---
 
-## 📖 Visão Geral
+## 📌 Principais Funcionalidades
 
-- **Problema**: Deslocamentos urbanos no Brasil têm alta variabilidade e imprevistos constantes, gerando atrasos, estresse e perda de produtividade.  
-- **Solução**: Usuário informa destino e horário de chegada desejado no WhatsApp. Whatlas consulta múltiplas fontes em tempo real e retorna o melhor horário de saída, com margem de segurança personalizável.
-
----
-
-## ✨ Principais Funcionalidades
-
-- **Cálculo Preditivo de Tempo de Viagem**  
-  - Integra APIs de rotas (Google Directions), dados de ônibus (SPTrans), clima (OpenWeather) e agenda (Google Calendar).  
-  - Ajuste dinâmico de margem de segurança conforme perfil do usuário (Pro/Enterprise).
-
-- **Notificações Programadas**  
-  - Agendamento de lembretes via Pub/Sub e Cloud Scheduler.  
-  - Mensagens automáticas no WhatsApp no horário de saída calculado.
-
-- **Status Operacional**  
-  - Consulta de disponibilidade de linhas de metrô e CPTM via scrapers em Cloud Functions.  
-  - Alertas de interrupções e atrasos em tempo real.
-
-- **Customização de Perfil**  
-  - Margem de segurança configurável (rápido, normal, conservador).  
-  - Histórico de trajetos e estatísticas de desempenho.
+- Planejamento de rota com base no trânsito e transporte público em tempo real  
+- Integração com Google Directions API, SPTrans, OpenWeather e Google Calendar  
+- Sugestão de horário ideal de saída para compromissos  
+- Agendamento de notificações automáticas para próximos deslocamentos  
+- Operação direta via WhatsApp Business (sem necessidade de app)
 
 ---
 
-## 🏗 Arquitetura Técnica
+## 🧱 Arquitetura Técnica
 
-\`\`\`plaintext
-[WhatsApp Business API]
-          │
-          ▼
-     [n8n Orquestração]
-       ┌─────────────┐
-       │ Conversas   │
-       │ e Fluxos    │
-       └─────────────┘
-          │
-          ▼
-┌──────────────────────────┐
-│ Backend Serverless       │
-│ - Node.js + Fastify      │
-│ - Clean Architecture     │
-│ - Google Cloud Run       │
-└──────────────────────────┘
-    │      │       │
-    │      │       └─► [Cloud Functions (Python)]: scrapers CPTM, SPTrans
-    │      │
-    │      └─► [Firestore]: usuários, histórico, perfis
-    │
-    └─► [Google Directions API, OpenWeather, Google Calendar]
-          │
-          └─► [Pub/Sub & Scheduler]: notificações & tarefas recorrentes
-\`\`\`
+- **Frontend**: WhatsApp Business API (via 360Dialog ou Twilio)
+- **Orquestração de Fluxos**: [n8n](https://n8n.io)
+- **Backend**: Serverless (Node.js + Fastify) com Clean Architecture no Google Cloud Run
+- **Módulos Auxiliares**: Cloud Functions em Python (ex: scraping da CPTM)
+- **Banco de Dados**: Google Firestore
+- **Infraestrutura**: Pub/Sub + Cloud Scheduler (para notificações e jobs)
 
 ---
 
-## ⚙️ Tech Stack
+## 🧪 Tecnologias Utilizadas
 
-| Camada              | Tecnologia / Serviço                                     |
-|---------------------|----------------------------------------------------------|
-| Mensageria          | WhatsApp Business API (360Dialog / Twilio)               |
-| Orquestração        | n8n                                                      |
-| Backend             | Node.js, Fastify, Clean Architecture                     |
-| Serverless Compute  | Google Cloud Run                                         |
-| Funções Auxiliares  | Google Cloud Functions (Python)                          |
-| Banco de Dados      | Firestore                                                |
-| Agendamento         | Pub/Sub, Cloud Scheduler                                |
-| APIs Externas       | Google Directions, OpenWeather, Google Calendar, SPTrans |
-| Deploy & CI/CD      | GitHub Actions → Cloud Build → Cloud Run                 |
+- Node.js, TypeScript, Fastify  
+- Google Cloud Platform (Cloud Run, Firestore, Pub/Sub, Functions)  
+- Python (scraping e automações)  
+- WhatsApp Business API  
+- SPTrans API, Google Directions API, OpenWeather API  
+- CI/CD com GitHub Actions
 
 ---
 
-## 🚀 Instalação & Deploy
+## 💼 Modelo de Negócio
 
-1. **Clone o repositório**  
-   \`\`\`bash
-   git clone https://github.com/seu-org/whatlas.git
-   cd whatlas
-   \`\`\`
-
-2. **Configurar variáveis de ambiente** (em \`.env`)  
-   \`\`\`env
-   WHATSAPP_API_TOKEN=…
-   SPTRANS_API_KEY=…
-   GOOGLE_DIRECTIONS_KEY=…
-   OPENWEATHER_KEY=…
-   FIREBASE_PROJECT_ID=…
-   GCLOUD_SERVICE_ACCOUNT_KEY=…
-   \`\`\`
-
-3. **Instalar dependências & testar local**  
-   \`\`\`bash
-   npm ci
-   npm run dev        # Inicia Fastify em modo desenvolvimento
-   \`\`\`
-
-4. **Deploy no Google Cloud Run**  
-   - Configure \`gcloud\` CLI e autentique-se.  
-   - Execute:  
-     \`\`\`bash
-     npm run build
-     gcloud run deploy whatlas-backend        --image gcr.io/$GOOGLE_CLOUD_PROJECT/whatlas        --platform managed        --region southamerica-east1        --allow-unauthenticated
-     \`\`\`
-
-5. **Configurar Cloud Scheduler & Pub/Sub**  
-   - Importar job de agendamento em \`scheduler.yaml\`.  
-   - Vincular tópico Pub/Sub a \`notifier\` Cloud Function.
+- **SaaS B2C**: Assinatura mensal para usuários individuais (com plano Pro)
+- **SaaS B2B**: Soluções para empresas e RHs monitorarem pontualidade e deslocamento de equipes
 
 ---
 
-## 📱 Como Usar
+## 📈 Roadmap
 
-1. Adicione o número de WhatsApp do Whatlas aos seus contatos.  
-2. Envie mensagem no formato:  
-   \`\`\`
-   /trajeto
-   Destino: Av. Paulista, 1000
-   Chegar até: 08:30
-   Margem: Normal
-   \`\`\`
-3. Aguarde o cálculo e receba a resposta:
-   > “Para chegar às 08:30 na Av. Paulista, 1000, saia às 07:45. Margem de segurança: 10 minutos.”
-
-4. Opcional:  
-   - \`/agendar\` para receber lembrete de saída.  
-   - \`/historico\` para ver seus últimos 10 trajetos.
+- [x] MVP funcional com integração WhatsApp + API Directions  
+- [x] Integração com Google Calendar  
+- [x] Monitoramento de linhas SPTrans/CPTM  
+- [ ] Classificação inteligente de compromissos por prioridade  
+- [ ] Dashboard B2B para empresas
 
 ---
 
-## 🤝 Contribuição
+## 🤝 Contribuindo
 
 1. Fork este repositório  
-2. Crie uma branch: \`git checkout -b feature/nova-funcionalidade\`  
-3. Faça commit das mudanças: \`git commit -m "feat: descrição breve"\`  
-4. Abra um Pull Request para \`main\`
+2. Crie uma branch com sua feature (`git checkout -b feature/nome`)  
+3. Commit suas alterações (`git commit -m 'feat: minha contribuição'`)  
+4. Faça push da branch (`git push origin feature/nome`)  
+5. Abra um Pull Request
+
+---
+
+## 🧑‍💻 Equipe
+
+- **Yuji Arima** — Desenvolvedor Full Stack, Idealizador  
+- **Luigi Ishii** — Back-end, Integrador de APIs  
+- **Prof. Dra. Ana Grasielle Dionísio Corrêa** — Orientadora Acadêmica
 
 ---
 
 ## 📄 Licença
 
-Este projeto está licenciado sob a [MIT License](./LICENSE.md).
+Este projeto está licenciado sob a **MIT License**. Veja o arquivo [LICENSE](./LICENSE) para mais detalhes.
+
