@@ -1,6 +1,6 @@
 import { Complaint } from "../entities/complaint.model";
 
-type VoteResult = {
+export type VoteResult = {
   status: 'voted' | 'changed' | 'removed',
   newScore: number
 };
