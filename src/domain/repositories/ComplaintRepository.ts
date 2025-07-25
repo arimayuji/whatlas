@@ -6,7 +6,7 @@ type VoteResult = {
 };
 
 export interface ComplaintRepository {
-  create: (complaint: Complaint) => Promise<void>
+  create: (complaint: Complaint) => Promise<Complaint>
   findAll: () => Promise<Complaint[]>
   findBySubjectType: (subjectType: string) => Promise<Complaint[]>
   vote: (id: string,userId: string, voteType: "up" | "down") => Promise<VoteResult>
