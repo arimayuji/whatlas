@@ -26,13 +26,15 @@ import { makeGoogleController } from "./infra/factories/google-controller.factor
 import { makeBusController } from "./infra/factories/bus-controller.factory";
 import { busRoutes } from "./presentation/routes/bus.route";
 import { trainsStatusRoute } from "./presentation/routes/train-status.route";
+import { setLogger } from "./infra/logger";
 
 dotenv.config();
 
 const app = fastify({
-  logger: {
-    level: 'info',
-  },}).withTypeProvider<ZodTypeProvider>();
+  logger: true,
+}).withTypeProvider<ZodTypeProvider>();
+
+setLogger(app.log)
 
 app.setValidatorCompiler(validatorCompiler);
 app.setSerializerCompiler(serializerCompiler);
