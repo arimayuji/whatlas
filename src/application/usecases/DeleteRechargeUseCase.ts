@@ -1,8 +1,8 @@
-import { logger } from "firebase-functions"
 import { RechargeNotExists } from "../../domain/errors/RechargeNotExists"
 import { UserNotExistsError } from "../../domain/errors/UserNotExistsError"
 import { RechargeRepository } from "../../domain/repositories/RechargeRepository"
 import { UserRepository } from "../../domain/repositories/UserRepository"
+import { logger } from "../../infra/logger"
 
 interface DeleteRechargeUseCaseDTO {
   rechargeId: string

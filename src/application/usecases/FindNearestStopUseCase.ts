@@ -1,6 +1,6 @@
-import { logger } from "firebase-functions";
 import { GeoRepository } from "../../domain/repositories/GeoRepository";
 import { schemasMap } from "../../infra/@types/supabase-tables.type";
+import { logger } from "../../infra/logger";
 
 interface FindNearestStopDTO {
   tableName: keyof typeof schemasMap;
@@ -17,7 +17,7 @@ export class FindNearestStopUseCase {
     logger.info(`[Geo] Nearest stop found`, {
       stop: nearestStop,
     })
-    
+
     return nearestStop;
   }
 }

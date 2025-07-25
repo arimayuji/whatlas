@@ -1,8 +1,8 @@
-import { logger } from "firebase-functions";
 import { Location } from "../../domain/entities/location.model";
 import { GoogleTokens } from "../../domain/entities/user.model";
 import { UserAlreadyExistsError } from "../../domain/errors/UserAlreadyExists";
 import { UserRepository } from "../../domain/repositories/UserRepository";
+import { logger } from "../../infra/logger";
 
 interface CreateUserDTO {
   firstName: string;

@@ -1,7 +1,7 @@
-import { logger } from "firebase-functions";
 import { UserNotExistsError } from "../../domain/errors/UserNotExistsError";
 import { TripRepository } from "../../domain/repositories/TripRepository";
 import { UserRepository } from "../../domain/repositories/UserRepository";
+import { logger } from "../../infra/logger";
 
 interface DeleteUserTripDTO {
   userId: string;
