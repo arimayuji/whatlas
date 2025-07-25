@@ -5,6 +5,7 @@ import { MoreThanFifteenMinutesInMarginError } from "../../domain/errors/MoreTha
 import { MoreThanThreeDestinationsError } from "../../domain/errors/MoreThanThreeDestinationsError";
 import { UserNotExistsError } from "../../domain/errors/UserNotExistsError";
 import { UserRepository } from "../../domain/repositories/UserRepository";
+import { logger } from "../../infra/logger";
 
 interface UpdateUserDTO {
   marginInMinutes?: number;
@@ -22,21 +23,30 @@ export class UpdateUserUseCase {
     if (!existing) throw new UserNotExistsError();
 
     if (marginInMinutes && marginInMinutes > 15) {
+      logger.error("Margin in minutes must be a number between 0 and 15");
       throw new MoreThanFifteenMinutesInMarginError();
     }
 
-    if(marginInMinutes && marginInMinutes < 0) {
+    if (marginInMinutes && marginInMinutes < 0) {
+      logger.error("Margin in minutes must be a number between 0 and 15");
       throw new InvalidMarginMinutesError();
     }
 
     if (destinations && destinations.length > 3) {
+      logger.error("More than 3 destinations");
       throw new MoreThanThreeDestinationsError();
     }
 
-    if (destinations && destinations.some((destination) => !destination.label|| !destination.latitude || !destination.longitude)) {
+    if (destinations && destinations.some((destination) => !destination.label || !destination.latitude || !destination.longitude)) {
+      logger.error("Invalid destination");
       throw new InvalidDestinationError();
     }
 
+    logger.info(`[User] Attempting to update user ${id}`, {
+      defaultOrigin,
+      destinations,
+      marginInMinutes,
+    });
 
     return this.userRepository.update(
       id,

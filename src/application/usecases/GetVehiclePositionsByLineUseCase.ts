@@ -1,3 +1,4 @@
+import { logger } from "../../infra/logger";
 import { SpTransGateway } from "../gateways/SpTransGateway";
 
 interface GetVehiclePositionsByLineDTO {
@@ -8,6 +9,12 @@ export class GetVehiclePositionsByLineUseCase {
   constructor(private readonly spTransApi: SpTransGateway) {}
 
   async execute({lineCode}: GetVehiclePositionsByLineDTO) {
-    return this.spTransApi.getVehiclePositionsByLine(lineCode);
+    const vehiclePositions = await this.spTransApi.getVehiclePositionsByLine(lineCode);
+
+    logger.info(`[VehiclePositions] Vehicle positions fetched successfully`, {
+      vehiclePositions
+    })
+    
+    return vehiclePositions
   }
 }

@@ -1,3 +1,4 @@
+import { logger } from "../../infra/logger";
 import { GoogleApiGateway } from "../gateways/GoogleApiGateway";
 
 interface GetWeatherUseCaseDTO {
@@ -9,6 +10,10 @@ export class GetWheaterUseCase {
   constructor(private readonly googleApi: GoogleApiGateway) {}
 
   async execute({  latitude, longitude }: GetWeatherUseCaseDTO) {
-    return this.googleApi.getWeatherByLatLng({ latitude, longitude });
+    const weather = await this.googleApi.getWeatherByLatLng({ latitude, longitude });
+
+    logger.info('[Weather] Weather fetched', { weather })
+    
+    return weather
   }
 }

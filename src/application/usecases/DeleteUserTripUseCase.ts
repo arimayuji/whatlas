@@ -1,3 +1,4 @@
+import { logger } from "firebase-functions";
 import { UserNotExistsError } from "../../domain/errors/UserNotExistsError";
 import { TripRepository } from "../../domain/repositories/TripRepository";
 import { UserRepository } from "../../domain/repositories/UserRepository";
@@ -14,6 +15,7 @@ export class DeleteUserTripUseCase {
     const userExists = await this.userRepository.findById(userId);
 
     if (!userExists) {
+      logger.warn(`[Trip] User ${userId} not found, cannot delete trip`)
       throw new UserNotExistsError()
     }
 
@@ -24,6 +26,11 @@ export class DeleteUserTripUseCase {
     }
 
     await this.tripRepository.deleteUserTrip(tripExists.id, userId)
+
+    logger.info(`[Trip] Trip deleted successfully for user ${userId}`, {
+      tripId: tripExists.id,
+      destination: tripExists.destination,
+    });
 
     return true  
   }

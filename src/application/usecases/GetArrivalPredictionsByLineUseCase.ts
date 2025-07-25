@@ -1,3 +1,4 @@
+import { logger } from "../../infra/logger";
 import { SpTransGateway } from "../gateways/SpTransGateway";
 
 interface GetArrivalPredicitonsByLineDTO {
@@ -8,6 +9,12 @@ export class GetArrivalPredicitonsByLineUseCase {
   constructor(private readonly spTransApi: SpTransGateway) {}
 
   async execute({lineCode}: GetArrivalPredicitonsByLineDTO) {
-    return this.spTransApi.getArrivalPredictionByLine(lineCode);
+    const arrivalPrediction = await this.spTransApi.getArrivalPredictionByLine(lineCode);
+
+    logger.info(`[ArrivalPrediction] Arrival predictions fetched successfully`, {
+      arrivalPrediction
+    })
+    
+    return arrivalPrediction;
   }
 }

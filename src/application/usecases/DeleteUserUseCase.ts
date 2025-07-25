@@ -1,3 +1,4 @@
+import { logger } from "firebase-functions";
 import { UserNotExistsError } from "../../domain/errors/UserNotExistsError";
 import { UserRepository } from "../../domain/repositories/UserRepository";
 
@@ -12,7 +13,12 @@ export class DeleteUserUseCase {
     
     const existing = await this.userRepository.findById(id);
 
-    if (!existing) throw new UserNotExistsError();
+    if (!existing) {
+      logger.warn(`[User] User ${id} not found, cannot delete`)
+      throw new UserNotExistsError();
+    }
+
+    logger .info(`[User] User ${id} deleted successfully`)
     
     return this.userRepository.delete(id);
   }

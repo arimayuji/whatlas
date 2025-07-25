@@ -1,3 +1,4 @@
+import { logger } from "firebase-functions";
 import { BusRepository } from "../../domain/repositories/BusRepository"
 
 interface GetTerminalBusLinesDTO{
@@ -7,6 +8,14 @@ interface GetTerminalBusLinesDTO{
 export class GetTerminalBusLinesUseCase{
   constructor(private busRepository: BusRepository) {}
   async execute(data: GetTerminalBusLinesDTO){
-    return await this.busRepository.getAllBusLineOfTerminal(data.terminal)
+    const busLines = await this.busRepository.getAllBusLineOfTerminal(data.terminal)
+
+    if (!busLines) return [];
+    
+    logger.info(`[BusLine] Bus lines fetched successfully`, {
+      busLines
+    })
+    
+    return busLines
   }
 }

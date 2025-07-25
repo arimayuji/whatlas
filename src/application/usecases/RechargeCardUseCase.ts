@@ -1,5 +1,6 @@
 import { NegativeRechargeError } from "../../domain/errors/NegativeRechargeError"
 import { BalanceRepository } from "../../domain/repositories/BalanceRepository"
+import { logger } from "../../infra/logger"
 
 interface RechargeCardUseCaseDTO {
   userId: string
@@ -13,8 +14,16 @@ export class RechargeCardUseCase {
     const currentBalance = await this.balanceRepository.getUserCardBalance(userId)
 
     if (amount < 0) {
+      logger.error(`[Recharge] Amount cannot be negative`)
       throw new NegativeRechargeError()
     }
+
+    if (amount === 0) {
+      logger.error(`[Recharge] Amount cannot be zero`)
+      throw new NegativeRechargeError()
+    }
+
+    logger.info(`[Recharge] Attempting to add ${amount} to balance for user ${userId}`)
 
     const newBalance = currentBalance + amount
 

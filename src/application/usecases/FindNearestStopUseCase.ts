@@ -1,3 +1,4 @@
+import { logger } from "firebase-functions";
 import { GeoRepository } from "../../domain/repositories/GeoRepository";
 import { schemasMap } from "../../infra/@types/supabase-tables.type";
 
@@ -11,6 +12,12 @@ export class FindNearestStopUseCase {
   constructor(private readonly geoRepository: GeoRepository) {}
 
   async execute({ tableName, latitude, longitude }: FindNearestStopDTO) {
-    return this.geoRepository.findNearestStop(tableName, latitude, longitude);
+    const nearestStop = await this.geoRepository.findNearestStop(tableName, latitude, longitude);
+
+    logger.info(`[Geo] Nearest stop found`, {
+      stop: nearestStop,
+    })
+    
+    return nearestStop;
   }
 }

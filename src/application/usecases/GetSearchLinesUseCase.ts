@@ -1,4 +1,5 @@
 
+import { logger } from "../../infra/logger";
 import { SpTransGateway } from "../gateways/SpTransGateway";
 
 interface GetSearchLineDTO {
@@ -9,6 +10,13 @@ export class GetSearchLineUseCase {
   constructor(private readonly spTransApi: SpTransGateway) {}
 
   async execute({term}: GetSearchLineDTO) {
-    return this.spTransApi.searchLines(term);
+    const searchLines = await this.spTransApi.searchLines(term);
+
+    if(!searchLines || searchLines.length === 0)
+      return [];
+
+    logger.info(`[Search Line] Lines found: ${searchLines.length}`)
+
+    return searchLines
   }
 }

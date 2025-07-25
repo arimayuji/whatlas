@@ -1,9 +1,16 @@
 import { UserRepository } from "../../domain/repositories/UserRepository";
+import { logger } from "../../infra/logger";
 
 export class GetAllUsersUseCase {
   constructor(private readonly userRepository: UserRepository) {}
 
   async execute() {
-    return this.userRepository.findAll()
+    const users = this.userRepository.findAll()
+
+    logger.info(`[User] Users fetched successfully`, {
+      users
+    })
+    
+    return users
   }
 }

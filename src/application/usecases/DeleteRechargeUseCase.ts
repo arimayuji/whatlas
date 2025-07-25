@@ -1,3 +1,4 @@
+import { logger } from "firebase-functions"
 import { RechargeNotExists } from "../../domain/errors/RechargeNotExists"
 import { UserNotExistsError } from "../../domain/errors/UserNotExistsError"
 import { RechargeRepository } from "../../domain/repositories/RechargeRepository"
@@ -18,13 +19,15 @@ export class DeleteRechargeUseCase {
       return false
     }
 
-    if(!recharges.find(recharge => recharge.id === rechargeId)) {
+    if (!recharges.find(recharge => recharge.id === rechargeId)) {
+      logger.warn(`[Recharge] Recharge ${rechargeId} not found, cannot delete`)
       throw new RechargeNotExists()
     }
 
     const userExists = await this.userRepository.findById(userId)
 
     if (!userExists) {
+      logger.warn(`[Recharge] User ${userId} not found, cannot delete`)
       throw new UserNotExistsError()
     }
 

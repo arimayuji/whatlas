@@ -1,3 +1,4 @@
+import { logger } from "firebase-functions";
 import { Location } from "../../domain/entities/location.model";
 import { GoogleTokens } from "../../domain/entities/user.model";
 import { UserAlreadyExistsError } from "../../domain/errors/UserAlreadyExists";
@@ -21,16 +22,22 @@ export class CreateUserUseCase {
     const existing = await this.userRepository.findById(id);
 
     if (existing) {
+      logger.warn(`[User] User ${id} already exists`);
       throw new UserAlreadyExistsError();
     }
-    
-    return this.userRepository.create({
+
+    const newUser = await this.userRepository.create({
       createdAt, firstName, id, lastName, username, destinations, defaultOrigin: defaultOrigin, marginInMinutes: 10, googleCalendarConnected: false, googleCalendarTokens : null, updatedAt: createdAt, recharges: [], trips: [], cardBalance: {
         currentBalance: 0,
         remainingBusTickets: 0,
         remainingSubwayTickets: 0,
         createdAt: createdAt,
         updatedAt: createdAt
-    }});
+      }
+    });
+    
+    logger.info(`[User] User ${id} created successfully`)
+    
+    return newUser
   }
 }

@@ -1,3 +1,4 @@
+import { logger } from "../../infra/logger";
 import { GetTransitRouteType } from "../@types/google-gateway.type";
 import { GoogleApiGateway } from "../gateways/GoogleApiGateway";
 
@@ -15,7 +16,7 @@ export class GetTransitRouteUseCase{
     intermediates,
     optimizeWaypointOrder,
   }: GetTransitRouteType) {
-    return this.googleApiGateway.getTransitRoute({
+    const transitRoute = await this.googleApiGateway.getTransitRoute({
       destination,
       origin,
       travelMode,
@@ -26,5 +27,15 @@ export class GetTransitRouteUseCase{
       computeAlternateRoutes,
       optimizeWaypointOrder,
     });
+
+    if (!transitRoute) {
+      return null
+    }
+
+    logger.info(`[TransitRoute] Transit route fetched successfully`, {
+      transitRoute
+    })
+
+    return transitRoute
   }
 }
