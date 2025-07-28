@@ -1,5 +1,5 @@
-import { logger } from "firebase-functions";
 import { BusRepository } from "../../domain/repositories/BusRepository"
+import { logger } from "../../infra/logger";
 
 interface GetTerminalBusLinesDTO{
   terminal: string
@@ -15,7 +15,7 @@ export class GetTerminalBusLinesUseCase{
     logger.info(`[BusLine] Bus lines fetched successfully`, {
       busLines
     })
-    
+
     return busLines
   }
 }
