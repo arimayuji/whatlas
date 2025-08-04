@@ -112,7 +112,7 @@
     "zod": "^3.25.67"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "generate:types": "npx supabase gen types typescript --project-id wecvdhftldlmiyvuwtad --schema public > src/@types/supabase.types.ts",
     "build": "tsc",
     "start": "node dist/app.js",
@@ -131,13 +131,20 @@
   },
   "homepage": "https://github.com/arimayuji/whatlas#readme",
   "devDependencies": {
+    "@babel/core": "^7.28.0",
+    "@babel/preset-env": "^7.28.0",
+    "@babel/preset-typescript": "^7.27.1",
+    "@jest/globals": "^30.0.5",
     "@tsconfig/node24": "^24.0.1",
     "@typescript-eslint/eslint-plugin": "^8.35.1",
     "@typescript-eslint/parser": "^8.35.1",
+    "babel-jest": "^30.0.5",
     "eslint": "^9.30.1",
     "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-prettier": "^5.5.1",
+    "jest": "^30.0.5",
     "prettier": "^3.6.2",
-    "supabase": "^2.26.9"
+    "supabase": "^2.26.9",
+    "ts-jest": "^29.4.1"
   }
 }
