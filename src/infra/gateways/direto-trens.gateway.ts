@@ -2,6 +2,18 @@ import axios, { AxiosInstance } from "axios";
 import { DiretoTrensGateway } from "../../application/gateways/DiretoTrensGateway";
 import { StatusModel, StatusSchema } from "../../domain/entities/direto-dos-trens/status.model";
 import { logger } from "../logger";
+import { LastStatusDTO } from "../../interfaces/dtos/last-status.dto";
+import { StatusDTO } from "../../interfaces/dtos/status.dto";
+
+export type ApiStatusResponse = {
+  codigo: number;
+  criado: string;
+  descricao?: string;
+  id: number;
+  situacao: string;
+}
+
+export type ApiLastStatusResponse = ApiStatusResponse & { modificado?: string };
 
 export class HttpDiretoTrensGateway implements DiretoTrensGateway{
   private readonly client: AxiosInstance;
@@ -16,14 +28,18 @@ export class HttpDiretoTrensGateway implements DiretoTrensGateway{
   }
 
   async getLinesLastStatus(): Promise<StatusModel[]> {
-    const { data, status, statusText} = await this.client.get<StatusModel[]>('/status');
+    const { data, status, statusText} = await this.client.get<ApiLastStatusResponse[]>('/status');
 
     if (status !== 200) {
       logger.error(`Failed to fetch lines last status: ${statusText}`);
       throw new Error(`Failed to fetch lines last status: ${statusText}`);
     }
 
-    const parsedData = data.map(item => StatusSchema.parse(item));
+    const linesLastStatus = data.map(lastStatus => {
+       return LastStatusDTO.fromApi(lastStatus);
+    })
+
+    const parsedData = linesLastStatus.map(item => StatusSchema.parse(item));
 
     if (!Array.isArray(parsedData)) {
       logger.error("Invalid response format for lines last status");
@@ -56,7 +72,7 @@ export class HttpDiretoTrensGateway implements DiretoTrensGateway{
   }
 
   async getLastYearLineIds(year: number, lineCode: number): Promise<{ id: number; }[]> {
-    const { data, status, statusText } = await this.client.get<{ id: number; }[]>(`/status}/codigo/${lineCode}/${year}`);
+    const { data, status, statusText } = await this.client.get<{ id: number; }[]>(`/status/codigo/${lineCode}/${year}`);
     
     if (status !== 200) {
       logger.error(`Failed to fetch last year line IDs: ${statusText}`);
@@ -76,14 +92,16 @@ export class HttpDiretoTrensGateway implements DiretoTrensGateway{
   }
 
   async getStatusById(id: number): Promise<StatusModel> {
-   const { data, status, statusText } = await this.client.get<StatusModel>(`/status/id/${id}`);
+   const { data, status, statusText } = await this.client.get<ApiStatusResponse>(`/status/id/${id}`);
 
     if (status !== 200) {
       logger.error(`Failed to fetch status by ID: ${statusText}`);
       throw new Error(`Failed to fetch status by ID: ${statusText}`);
     }
 
-    const parsedData = StatusSchema.parse(data);
+    const  lineStatus = StatusDTO.fromApi(data);
+
+    const parsedData = StatusSchema.parse(lineStatus);
 
     if (!parsedData) {
       logger.error("Invalid response format for status by ID");
