@@ -1,32 +1,21 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 import { responseSuccess } from "../../utils/responseSuccess";
-import { GetTrainStatusUseCase } from "../../application/usecases/GetTrainStatusUseCase";
-import { GetAllTrainStatusUseCase } from "../../application/usecases/GetAllTrainStatusUseCase";
+import { GetTrainStatusUseCase } from "../../application/usecases/GetTrainsStatusUseCase";
+import { TRAIN_LINE_NAME_CODE } from "../../utils/train-code";
 
 export class TrainStatusController {
-  constructor(private readonly getTrainStatusUseCase: GetTrainStatusUseCase,
-      private readonly getAllTrainStatusUseCase: GetAllTrainStatusUseCase,
-  ) {}
+  constructor(private readonly getTrainStatusUseCase: GetTrainStatusUseCase
+  ) { }
 
-  async findAll(_: FastifyRequest, reply: FastifyReply) {
-    const data = await this.getAllTrainStatusUseCase.execute();
+  async findTrainLastStatus(_: FastifyRequest, reply: FastifyReply) {
+    const data = await this.getTrainStatusUseCase.exec();
+
+    const dataWithLineName = data.map(lastStatus => {
+      const lineName = Object.keys(TRAIN_LINE_NAME_CODE).find(key => Number(key) === lastStatus.code);
+
+      return {...lastStatus,lineName }
+    })
     
-    return responseSuccess(reply, {data, message: "Founded all lines", code: 200});
+    return responseSuccess(reply, { data: dataWithLineName, message: "Founded all lines", code: 200 });
   }
-
-  async findByName(
-    request: FastifyRequest<{ Params: { name: string } }>,
-    reply: FastifyReply
-  ) {
-    const { name } = request.params;
-    
-    const data = await this.getTrainStatusUseCase.execute({ name });
-
-    if (!data) {
-        return reply.code(404).send({ message: "Linha não encontrada" });
-      }
-
-    return responseSuccess(reply, {data, message: "Founded line", code: 200});
-  }
-
 }
