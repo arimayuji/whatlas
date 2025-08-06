@@ -7,7 +7,7 @@ export const UserCardBalanceModelSchema = z.object({
   remainingBusTickets: z.number().nonnegative().default(0),
   remainingSubwayTickets: z.number().nonnegative({error: ZOD_ERRORS_MESSAGES["number.nonnegative"]}).default(0),
   createdAt: z.string(),
-  updatedAt: z.string(),
+  updatedAt: z.string().nullable(),
 }).transform(userCardBalance => {
   return {
     ...userCardBalance,

@@ -27,6 +27,6 @@ export class RechargeCardUseCase {
 
     const newBalance = currentBalance + amount
 
-    await this.balanceRepository.updateUserCardBalance(userId, { currentBalance: newBalance, updatedAt: new Date().toISOString() })
+    await this.balanceRepository.updateUserCardBalance(userId,newBalance, new Date().toISOString())
   }
 }

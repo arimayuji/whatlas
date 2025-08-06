@@ -29,7 +29,8 @@ export class BalanceRepositoryFirestore implements BalanceRepository {
 
   async updateUserCardBalance(
     userId: string,
-    { currentBalance, updatedAt }: UserCardBalance
+    currentBalance: number,
+    updatedAt: string
   ): Promise<void> {
     parseOrThrow(
       UserCardBalanceModelSchema,
