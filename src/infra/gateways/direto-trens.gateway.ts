@@ -17,8 +17,8 @@ export type ApiLastStatusResponse = ApiStatusResponse & { modificado?: string };
 
 export class HttpDiretoTrensGateway implements DiretoTrensGateway{
   private readonly client: AxiosInstance;
-
-  constructor(client: AxiosInstance) {
+  
+  constructor() {
     this.client = axios.create({
       baseURL: 'https://www.diretodostrens.com.br/api',
       headers: {
